@@ -51,74 +51,78 @@ svg { max-width: 100%; height: auto; }
 
 <div class="map-container">
 <svg id="campus-map" viewBox="0 0 360 480" xmlns="http://www.w3.org/2000/svg" style="max-width:400px;">
-<!-- 道路（上部、左から右へ斜めに走る外濠通り） -->
-<rect x="0" y="0" width="360" height="45" fill="#D0D0D0" rx="0"/>
-<text x="10" y="28" fill="#666" font-size="9" font-weight="600">← 市ヶ谷駅</text>
-<text x="280" y="28" fill="#666" font-size="9" font-weight="600">飯田橋駅 →</text>
-<text x="180" y="16" fill="#888" font-size="8" text-anchor="middle" font-weight="600">外 濠 通 り</text>
+<!-- 外濠通り（上部） -->
+<rect x="0" y="0" width="360" height="42" fill="#C0C0C0" rx="0"/>
+<text x="12" y="26" fill="#555" font-size="10" font-weight="700">← 市ヶ谷駅</text>
+<text x="260" y="26" fill="#555" font-size="10" font-weight="700">飯田橋駅 →</text>
+<text x="180" y="14" fill="#777" font-size="8" text-anchor="middle" font-weight="600" letter-spacing="3">外濠通り</text>
 
 <!-- 敷地 -->
-<rect x="0" y="45" width="360" height="435" fill="#F0EDE5" stroke="#C8C0B0" stroke-width="1.5" rx="4"/>
+<rect x="0" y="42" width="360" height="438" fill="#EDEADE" stroke="#C8C0B0" stroke-width="1"/>
 
 <!-- 中央広場（楕円） -->
-<ellipse cx="166" cy="280" rx="54" ry="109" fill="#D5E8D0" stroke="#A8C89A" stroke-width="1"/>
-<text x="166" y="283" fill="#6A8F5C" font-size="10" text-anchor="middle" font-weight="600">中央広場</text>
+<ellipse cx="166" cy="275" rx="54" ry="105" fill="#D8ECD0" stroke="#A8C89A" stroke-width="1" opacity="0.7"/>
+<text x="166" y="278" fill="#6A8F5C" font-size="9" text-anchor="middle" font-weight="600">中央広場</text>
 
-<!-- 参考建物（クリック不可） -->
-<rect x="220" y="295" width="48" height="164" rx="4" ry="4" fill="#E0E0E0" stroke="#BBB" stroke-width="1"/>
-<text x="244" y="370" fill="#999" font-size="8" text-anchor="middle">80年館</text>
-<text x="244" y="381" fill="#999" font-size="7" text-anchor="middle">(図書館)</text>
+<!-- 80年館（クリック不可） -->
+<rect x="220" y="295" width="48" height="164" rx="6" fill="#D8D8D8" stroke="#AAA" stroke-width="1"/>
+<text x="244" y="372" fill="#888" font-size="9" text-anchor="middle" font-weight="600">80年館</text>
+<text x="244" y="384" fill="#999" font-size="7" text-anchor="middle">(図書館)</text>
 
-<rect x="308" y="295" width="48" height="80" rx="4" ry="4" fill="#E0E0E0" stroke="#BBB" stroke-width="1"/>
-<text x="332" y="339" fill="#999" font-size="8" text-anchor="middle">体育館</text>
+<!-- 体育館（クリック不可） -->
+<rect x="308" y="295" width="48" height="80" rx="6" fill="#D8D8D8" stroke="#AAA" stroke-width="1"/>
+<text x="332" y="340" fill="#888" font-size="9" text-anchor="middle" font-weight="600">体育館</text>
 
 <!-- ===== クリック可能な建物 ===== -->
 
 <!-- BT: 左下、縦長 -->
 <g class="building-clickable" data-key="BT" id="bldg-BT">
-  <rect x="5" y="277" width="56" height="163" rx="4" ry="4" fill="#C8D6E5" stroke="#00205B" stroke-width="1.5"/>
-  <text x="33" y="350" fill="#333" font-size="9" text-anchor="middle" font-weight="600">ボアソ</text>
-  <text x="33" y="362" fill="#333" font-size="9" text-anchor="middle" font-weight="600">ナード</text>
-  <text x="33" y="374" fill="#333" font-size="9" text-anchor="middle" font-weight="600">タワー</text>
+  <rect x="5" y="277" width="56" height="163" rx="6" fill="#B0C4DE" stroke="#00205B" stroke-width="2"/>
+  <text x="33" y="348" fill="#00205B" font-size="10" text-anchor="middle" font-weight="800">BT</text>
+  <text x="33" y="362" fill="#333" font-size="8" text-anchor="middle" font-weight="600">ボアソナード</text>
+  <text x="33" y="373" fill="#333" font-size="8" text-anchor="middle" font-weight="600">タワー</text>
 </g>
 
 <!-- G: BTの右上、縦長 -->
 <g class="building-clickable" data-key="G" id="bldg-G">
-  <rect x="66" y="109" width="56" height="163" rx="4" ry="4" fill="#C8D6E5" stroke="#00205B" stroke-width="1.5"/>
-  <text x="94" y="185" fill="#333" font-size="9" text-anchor="middle" font-weight="600">富士見</text>
-  <text x="94" y="197" fill="#333" font-size="9" text-anchor="middle" font-weight="600">ゲート</text>
+  <rect x="66" y="109" width="56" height="163" rx="6" fill="#B0C4DE" stroke="#00205B" stroke-width="2"/>
+  <text x="94" y="182" fill="#00205B" font-size="10" text-anchor="middle" font-weight="800">G</text>
+  <text x="94" y="196" fill="#333" font-size="8" text-anchor="middle" font-weight="600">富士見</text>
+  <text x="94" y="207" fill="#333" font-size="8" text-anchor="middle" font-weight="600">ゲート</text>
 </g>
 
 <!-- S: 右上、大きめ -->
 <g class="building-clickable" data-key="S" id="bldg-S">
-  <rect x="155" y="7" width="97" height="163" rx="4" ry="4" fill="#C8D6E5" stroke="#00205B" stroke-width="1.5"/>
-  <text x="203" y="85" fill="#333" font-size="10" text-anchor="middle" font-weight="600">外濠校舎</text>
+  <rect x="155" y="47" width="97" height="123" rx="6" fill="#B0C4DE" stroke="#00205B" stroke-width="2"/>
+  <text x="203" y="100" fill="#00205B" font-size="12" text-anchor="middle" font-weight="800">S</text>
+  <text x="203" y="116" fill="#333" font-size="10" text-anchor="middle" font-weight="600">外濠校舎</text>
 </g>
 
-<!-- F: 右側中央、横長 -->
+<!-- F: 右側中央 -->
 <g class="building-clickable" data-key="F" id="bldg-F">
-  <rect x="259" y="171" width="97" height="121" rx="4" ry="4" fill="#C8D6E5" stroke="#00205B" stroke-width="1.5"/>
-  <text x="307" y="228" fill="#333" font-size="9" text-anchor="middle" font-weight="600">富士見坂</text>
-  <text x="307" y="240" fill="#333" font-size="9" text-anchor="middle" font-weight="600">校舎</text>
+  <rect x="259" y="171" width="97" height="121" rx="6" fill="#B0C4DE" stroke="#00205B" stroke-width="2"/>
+  <text x="307" y="224" fill="#00205B" font-size="12" text-anchor="middle" font-weight="800">F</text>
+  <text x="307" y="240" fill="#333" font-size="9" text-anchor="middle" font-weight="600">富士見坂校舎</text>
 </g>
 
-<!-- Y: 下側中央、横長 -->
+<!-- Y: 下側中央 -->
 <g class="building-clickable" data-key="Y" id="bldg-Y">
-  <rect x="88" y="381" width="97" height="95" rx="4" ry="4" fill="#C8D6E5" stroke="#00205B" stroke-width="1.5"/>
-  <text x="136" y="433" fill="#333" font-size="10" text-anchor="middle" font-weight="600">大内山校舎</text>
+  <rect x="88" y="381" width="97" height="95" rx="6" fill="#B0C4DE" stroke="#00205B" stroke-width="2"/>
+  <text x="136" y="424" fill="#00205B" font-size="12" text-anchor="middle" font-weight="800">Y</text>
+  <text x="136" y="440" fill="#333" font-size="9" text-anchor="middle" font-weight="600">大内山校舎</text>
 </g>
 
-<!-- バッジ（各建物の右上角付近） -->
-<circle id="badge-BT" cx="54" cy="281" r="13" fill="#FF6600"/>
-<text id="badge-text-BT" x="54" y="285" fill="#fff" font-size="10" text-anchor="middle" font-weight="700"></text>
-<circle id="badge-G" cx="115" cy="113" r="13" fill="#FF6600"/>
-<text id="badge-text-G" x="115" y="117" fill="#fff" font-size="10" text-anchor="middle" font-weight="700"></text>
-<circle id="badge-S" cx="245" cy="11" r="13" fill="#FF6600"/>
-<text id="badge-text-S" x="245" y="15" fill="#fff" font-size="10" text-anchor="middle" font-weight="700"></text>
-<circle id="badge-F" cx="349" cy="175" r="13" fill="#FF6600"/>
-<text id="badge-text-F" x="349" y="179" fill="#fff" font-size="10" text-anchor="middle" font-weight="700"></text>
-<circle id="badge-Y" cx="178" cy="385" r="13" fill="#FF6600"/>
-<text id="badge-text-Y" x="178" y="389" fill="#fff" font-size="10" text-anchor="middle" font-weight="700"></text>
+<!-- バッジ -->
+<circle id="badge-BT" cx="54" cy="281" r="14" fill="#FF6600" stroke="#fff" stroke-width="1.5"/>
+<text id="badge-text-BT" x="54" y="286" fill="#fff" font-size="11" text-anchor="middle" font-weight="700"></text>
+<circle id="badge-G" cx="115" cy="113" r="14" fill="#FF6600" stroke="#fff" stroke-width="1.5"/>
+<text id="badge-text-G" x="115" y="118" fill="#fff" font-size="11" text-anchor="middle" font-weight="700"></text>
+<circle id="badge-S" cx="245" cy="51" r="14" fill="#FF6600" stroke="#fff" stroke-width="1.5"/>
+<text id="badge-text-S" x="245" y="56" fill="#fff" font-size="11" text-anchor="middle" font-weight="700"></text>
+<circle id="badge-F" cx="349" cy="175" r="14" fill="#FF6600" stroke="#fff" stroke-width="1.5"/>
+<text id="badge-text-F" x="349" y="180" fill="#fff" font-size="11" text-anchor="middle" font-weight="700"></text>
+<circle id="badge-Y" cx="178" cy="385" r="14" fill="#FF6600" stroke="#fff" stroke-width="1.5"/>
+<text id="badge-text-Y" x="178" y="390" fill="#fff" font-size="11" text-anchor="middle" font-weight="700"></text>
 
 </svg>
 </div>

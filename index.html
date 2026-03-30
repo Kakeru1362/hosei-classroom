@@ -2,383 +2,312 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>法政大学 空き教室検索 - 市ヶ谷キャンパスマップ</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>法政大学 空き教室検索 - マップ版</title>
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Noto Sans JP',sans-serif;background:#f5f5f0;color:#333;overflow-x:hidden}
-.header{background:#00205B;color:#fff;padding:12px 16px;text-align:center;position:sticky;top:0;z-index:100}
-.header h1{font-size:18px;font-weight:700;letter-spacing:0.5px}
-.header p{font-size:12px;opacity:0.8;margin-top:2px}
-.map-container{padding:8px;display:flex;justify-content:center}
-svg text{pointer-events:none;user-select:none}
-.building-shape{cursor:pointer;transition:fill 0.2s,opacity 0.2s,stroke 0.2s}
-.building-shape:hover{opacity:0.85}
-.building-noclk{cursor:default}
-.controls{padding:8px 12px}
-.control-row{display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap;justify-content:center}
-.control-row label{font-size:12px;font-weight:600;color:#00205B;width:100%;text-align:center;margin-bottom:2px}
-.btn{padding:8px 12px;border:2px solid #ddd;border-radius:8px;background:#fff;font-size:13px;font-weight:600;color:#555;cursor:pointer;transition:all 0.15s;min-width:44px;min-height:44px;display:flex;align-items:center;justify-content:center}
-.btn:hover{border-color:#FF6600;color:#FF6600}
-.btn.active{background:#FF6600;color:#fff;border-color:#FF6600}
-.btn-show-all{padding:8px 16px;border:2px solid #00205B;border-radius:8px;background:#fff;font-size:13px;font-weight:600;color:#00205B;cursor:pointer;width:100%;min-height:44px;transition:all 0.15s}
-.btn-show-all:hover{background:#00205B;color:#fff}
-.btn-show-all.active{background:#00205B;color:#fff}
-.results{padding:8px 12px 80px}
-.results-header{font-size:15px;font-weight:700;color:#00205B;margin-bottom:8px;padding:8px 0;border-bottom:2px solid #FF6600}
-.building-section{margin-bottom:16px}
-.building-title{font-size:14px;font-weight:700;color:#FF6600;margin-bottom:6px;display:flex;align-items:center;gap:6px}
-.building-title .count{background:#FF6600;color:#fff;border-radius:10px;padding:1px 8px;font-size:11px}
-.room-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:4px}
-.room{background:#fff;border:1px solid #e0e0e0;border-radius:6px;padding:6px 4px;text-align:center;font-size:12px;font-weight:500;color:#333}
-.no-rooms{color:#999;font-size:13px;padding:12px;text-align:center}
-.floor-group{margin-bottom:8px}
-.floor-label{font-size:11px;color:#888;font-weight:600;margin-bottom:3px;padding-left:2px}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Helvetica Neue', 'Hiragino Sans', 'Meiryo', sans-serif; background: #F5F5F5; color: #333; }
+header { background: #00205B; color: #fff; padding: 16px 20px; text-align: center; }
+header h1 { font-size: 20px; font-weight: 700; letter-spacing: 1px; }
+header p { font-size: 13px; opacity: 0.8; margin-top: 2px; }
+
+.controls { padding: 12px 16px; background: #fff; border-bottom: 1px solid #ddd; }
+.btn-row { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; margin-bottom: 8px; }
+.btn-row:last-child { margin-bottom: 0; }
+.btn { padding: 7px 14px; border: 2px solid #00205B; background: #fff; color: #00205B; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.15s; }
+.btn:hover { background: #E8EDF3; }
+.btn.active { background: #00205B; color: #fff; }
+.btn-show-all { padding: 7px 16px; border: 2px solid #FF6600; background: #fff; color: #FF6600; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.15s; margin-top: 8px; }
+.btn-show-all:hover { background: #FFF0E0; }
+
+.map-container { padding: 12px; display: flex; justify-content: center; }
+svg { max-width: 100%; height: auto; }
+.building-clickable { cursor: pointer; transition: opacity 0.15s; }
+.building-clickable:hover { opacity: 0.8; }
+
+.results { padding: 16px; }
+.results-header { font-size: 16px; font-weight: 700; color: #00205B; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 2px solid #FF6600; }
+.building-section { margin-bottom: 16px; }
+.building-name { font-size: 14px; font-weight: 700; color: #00205B; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+.building-count { background: #FF6600; color: #fff; border-radius: 12px; padding: 2px 8px; font-size: 12px; }
+.room-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 6px; }
+.room-card { background: #fff; border: 1px solid #E0E0E0; border-radius: 8px; padding: 8px; text-align: center; font-size: 13px; font-weight: 600; color: #333; transition: all 0.15s; }
+.room-card:hover { border-color: #FF6600; box-shadow: 0 2px 6px rgba(255,102,0,0.15); }
+.no-selection { text-align: center; color: #999; padding: 40px 20px; font-size: 14px; }
+.no-rooms { text-align: center; color: #999; padding: 20px; font-size: 13px; }
 </style>
 </head>
 <body>
-<div class="header">
-  <h1>法政大学 空き教室検索</h1>
-  <p>市ヶ谷キャンパス マップ版</p>
+<header>
+<h1>法政大学 空き教室検索</h1>
+<p>市ヶ谷キャンパス</p>
+</header>
+
+<div class="controls">
+<div class="btn-row" id="day-btns"></div>
+<div class="btn-row" id="period-btns"></div>
+<div style="text-align:center"><button class="btn-show-all" id="show-all-btn">すべての建物を表示</button></div>
 </div>
 
 <div class="map-container">
-<svg id="campusMap" viewBox="0 0 360 480" width="100%" style="max-width:400px" xmlns="http://www.w3.org/2000/svg">
-  <!-- Campus ground -->
-  <rect x="20" y="20" width="320" height="440" rx="10" fill="#F0EDE5" stroke="#c0b8a8" stroke-width="1.5"/>
+<svg id="campus-map" viewBox="0 0 360 480" xmlns="http://www.w3.org/2000/svg" style="max-width:400px;">
+<!-- Background / campus outline -->
+<rect x="25" y="70" width="320" height="390" rx="18" ry="18" fill="#F0EDE5" stroke="#C8C0B0" stroke-width="1.5"/>
 
-  <!-- Roads -->
-  <!-- North road (top) -->
-  <rect x="15" y="8" width="330" height="16" rx="3" fill="#D0D0D0"/>
-  <!-- South road (bottom) -->
-  <rect x="15" y="456" width="330" height="16" rx="3" fill="#D0D0D0"/>
+<!-- Road (west side) -->
+<rect x="0" y="60" width="28" height="420" fill="#D0D0D0" rx="3"/>
+<text x="14" y="270" fill="#888" font-size="9" text-anchor="middle" transform="rotate(-90,14,270)" font-weight="600">外濠通り</text>
 
-  <!-- Trees along south road -->
-  <circle cx="50" cy="464" r="4" fill="#7CAA6E" opacity="0.7"/>
-  <circle cx="70" cy="464" r="4" fill="#8BB87E" opacity="0.7"/>
-  <circle cx="90" cy="464" r="4" fill="#7CAA6E" opacity="0.7"/>
-  <circle cx="110" cy="464" r="4" fill="#8BB87E" opacity="0.7"/>
-  <circle cx="130" cy="464" r="4" fill="#7CAA6E" opacity="0.7"/>
-  <circle cx="150" cy="464" r="4" fill="#8BB87E" opacity="0.7"/>
-  <circle cx="170" cy="464" r="4" fill="#7CAA6E" opacity="0.7"/>
-  <circle cx="190" cy="464" r="4" fill="#8BB87E" opacity="0.7"/>
-  <circle cx="210" cy="464" r="4" fill="#7CAA6E" opacity="0.7"/>
-  <circle cx="230" cy="464" r="4" fill="#8BB87E" opacity="0.7"/>
-  <circle cx="250" cy="464" r="4" fill="#7CAA6E" opacity="0.7"/>
-  <circle cx="270" cy="464" r="4" fill="#8BB87E" opacity="0.7"/>
-  <circle cx="290" cy="464" r="4" fill="#7CAA6E" opacity="0.7"/>
-  <circle cx="310" cy="464" r="4" fill="#8BB87E" opacity="0.7"/>
+<!-- Central plaza -->
+<rect x="140" y="225" width="70" height="140" rx="6" ry="6" fill="#D5E8D0" stroke="#A8C89A" stroke-width="1"/>
+<text x="175" y="298" fill="#6A8F5C" font-size="10" text-anchor="middle" font-weight="600">中央広場</text>
 
-  <!-- Compass (N arrow) top right -->
-  <g transform="translate(325, 40)">
-    <circle cx="0" cy="0" r="14" fill="#fff" stroke="#00205B" stroke-width="1.5" opacity="0.9"/>
-    <text x="0" y="-2" text-anchor="middle" font-size="10" font-weight="700" fill="#00205B">N</text>
-    <polygon points="0,-11 -3,-6 3,-6" fill="#00205B"/>
-  </g>
+<!-- Non-clickable buildings -->
+<rect x="210" y="380" width="50" height="70" rx="4" ry="4" fill="#E0E0E0" stroke="#BBB" stroke-width="1"/>
+<text x="235" y="412" fill="#999" font-size="8" text-anchor="middle">80年館</text>
+<text x="235" y="422" fill="#999" font-size="7" text-anchor="middle">(図書館)</text>
 
-  <!-- Gate: 正門 (top-left, northwest) -->
-  <circle cx="70" cy="28" r="5" fill="#CC3333" stroke="#fff" stroke-width="1"/>
-  <text x="70" y="46" text-anchor="middle" font-size="9" fill="#CC3333" font-weight="600">正門</text>
+<rect x="285" y="300" width="45" height="60" rx="4" ry="4" fill="#E0E0E0" stroke="#BBB" stroke-width="1"/>
+<text x="307" y="334" fill="#999" font-size="8" text-anchor="middle">体育館</text>
 
-  <!-- Gate: 富士見坂門 (bottom center, south) -->
-  <circle cx="200" cy="452" r="5" fill="#CC3333" stroke="#fff" stroke-width="1"/>
-  <text x="200" y="446" text-anchor="middle" font-size="9" fill="#CC3333" font-weight="600">富士見坂門</text>
+<!-- Clickable buildings -->
+<g class="building-clickable" data-key="BT" id="bldg-BT">
+  <rect x="40" y="280" width="80" height="140" rx="4" ry="4" fill="#C8D6E5" stroke="#00205B" stroke-width="1.5"/>
+  <text x="80" y="340" fill="#333" font-size="9" text-anchor="middle" font-weight="600">ボアソナード</text>
+  <text x="80" y="352" fill="#333" font-size="9" text-anchor="middle" font-weight="600">・タワー</text>
+</g>
 
-  <!-- ============ BUILDINGS ============ -->
+<g class="building-clickable" data-key="S" id="bldg-S">
+  <rect x="190" y="100" width="90" height="60" rx="4" ry="4" fill="#C8D6E5" stroke="#00205B" stroke-width="1.5"/>
+  <text x="235" y="134" fill="#333" font-size="10" text-anchor="middle" font-weight="600">外濠校舎</text>
+</g>
 
-  <!-- ボアソナード・タワー (BT) - Far left (west), tall/narrow north-south -->
-  <rect id="bldg-BT" class="building-shape" data-building="ボアソナードタワー"
-        x="32" y="110" width="42" height="280" rx="4"
-        fill="#C8D6E5" stroke="#8899aa" stroke-width="1"/>
-  <text x="53" y="230" text-anchor="middle" font-size="10" fill="#333" font-weight="600"
-        transform="rotate(-90,53,230)">ボアソナード・タワー</text>
-  <text x="53" y="260" text-anchor="middle" font-size="9" fill="#666"
-        transform="rotate(-90,53,260)">(BT)</text>
-  <!-- Badge BT -->
-  <circle id="badge-BT" cx="63" cy="118" r="11" fill="#FF6600" stroke="#fff" stroke-width="1.5"/>
-  <text id="badge-BT-text" x="63" y="122" text-anchor="middle" font-size="9" fill="#fff" font-weight="700">0</text>
+<g class="building-clickable" data-key="G" id="bldg-G">
+  <rect x="110" y="210" width="40" height="110" rx="4" ry="4" fill="#C8D6E5" stroke="#00205B" stroke-width="1.5"/>
+  <text x="130" y="258" fill="#333" font-size="9" text-anchor="middle" font-weight="600">富士見</text>
+  <text x="130" y="270" fill="#333" font-size="9" text-anchor="middle" font-weight="600">ゲート</text>
+</g>
 
-  <!-- 外濠校舎 (S) - North center, wide east-west -->
-  <rect id="bldg-S" class="building-shape" data-building="外濠校舎"
-        x="90" y="60" width="150" height="58" rx="4"
-        fill="#C8D6E5" stroke="#8899aa" stroke-width="1"/>
-  <text x="165" y="86" text-anchor="middle" font-size="11" fill="#333" font-weight="600">外濠校舎</text>
-  <text x="165" y="100" text-anchor="middle" font-size="9" fill="#666">(S)</text>
-  <!-- Badge S -->
-  <circle id="badge-S" cx="228" cy="68" r="11" fill="#FF6600" stroke="#fff" stroke-width="1.5"/>
-  <text id="badge-S-text" x="228" y="72" text-anchor="middle" font-size="9" fill="#fff" font-weight="700">0</text>
+<g class="building-clickable" data-key="Y" id="bldg-Y">
+  <rect x="120" y="385" width="60" height="50" rx="4" ry="4" fill="#C8D6E5" stroke="#00205B" stroke-width="1.5"/>
+  <text x="150" y="414" fill="#333" font-size="9" text-anchor="middle" font-weight="600">大内山校舎</text>
+</g>
 
-  <!-- 富士見ゲート (G) - Center-left, below S, right of BT -->
-  <rect id="bldg-G" class="building-shape" data-building="富士見ゲート"
-        x="90" y="138" width="120" height="90" rx="4"
-        fill="#C8D6E5" stroke="#8899aa" stroke-width="1"/>
-  <text x="150" y="180" text-anchor="middle" font-size="11" fill="#333" font-weight="600">富士見ゲート</text>
-  <text x="150" y="196" text-anchor="middle" font-size="9" fill="#666">(G)</text>
-  <!-- Badge G -->
-  <circle id="badge-G" cx="198" cy="146" r="11" fill="#FF6600" stroke="#fff" stroke-width="1.5"/>
-  <text id="badge-G-text" x="198" y="150" text-anchor="middle" font-size="9" fill="#fff" font-weight="700">0</text>
+<g class="building-clickable" data-key="F" id="bldg-F">
+  <rect x="275" y="215" width="60" height="80" rx="4" ry="4" fill="#C8D6E5" stroke="#00205B" stroke-width="1.5"/>
+  <text x="305" y="252" fill="#333" font-size="9" text-anchor="middle" font-weight="600">富士見坂</text>
+  <text x="305" y="264" fill="#333" font-size="9" text-anchor="middle" font-weight="600">校舎</text>
+</g>
 
-  <!-- 80年館 (Library) - Right side, north area, right of G -->
-  <rect class="building-noclk"
-        x="228" y="138" width="95" height="70" rx="4"
-        fill="#E0E0E0" stroke="#bbb" stroke-width="1"/>
-  <text x="276" y="170" text-anchor="middle" font-size="10" fill="#888" font-weight="600">80年館</text>
-  <text x="276" y="184" text-anchor="middle" font-size="8" fill="#aaa">(図書館)</text>
+<!-- Badges -->
+<circle id="badge-BT" cx="112" cy="284" r="13" fill="#FF6600"/>
+<text id="badge-text-BT" x="112" y="288" fill="#fff" font-size="10" text-anchor="middle" font-weight="700"></text>
 
-  <!-- 体育館 - Right side, center area, below 80年館 -->
-  <rect class="building-noclk"
-        x="248" y="248" width="80" height="60" rx="4"
-        fill="#E0E0E0" stroke="#bbb" stroke-width="1"/>
-  <text x="288" y="276" text-anchor="middle" font-size="10" fill="#888" font-weight="600">体育館</text>
+<circle id="badge-S" cx="273" cy="104" r="13" fill="#FF6600"/>
+<text id="badge-text-S" x="273" y="108" fill="#fff" font-size="10" text-anchor="middle" font-weight="700"></text>
 
-  <!-- 大内山校舎 (Y) - Center-south, large square, right of BT -->
-  <rect id="bldg-Y" class="building-shape" data-building="大内山校舎"
-        x="90" y="270" width="140" height="110" rx="4"
-        fill="#C8D6E5" stroke="#8899aa" stroke-width="1"/>
-  <text x="160" y="320" text-anchor="middle" font-size="11" fill="#333" font-weight="600">大内山校舎</text>
-  <text x="160" y="337" text-anchor="middle" font-size="9" fill="#666">(Y)</text>
-  <!-- Badge Y -->
-  <circle id="badge-Y" cx="218" cy="278" r="11" fill="#FF6600" stroke="#fff" stroke-width="1.5"/>
-  <text id="badge-Y-text" x="218" y="282" text-anchor="middle" font-size="9" fill="#fff" font-weight="700">0</text>
+<circle id="badge-G" cx="144" cy="214" r="13" fill="#FF6600"/>
+<text id="badge-text-G" x="144" y="218" fill="#fff" font-size="10" text-anchor="middle" font-weight="700"></text>
 
-  <!-- 富士見坂校舎 (F) - Right side, south area, right of Y -->
-  <rect id="bldg-F" class="building-shape" data-building="富士見坂校舎"
-        x="250" y="318" width="75" height="115" rx="4"
-        fill="#C8D6E5" stroke="#8899aa" stroke-width="1"/>
-  <text x="288" y="370" text-anchor="middle" font-size="10" fill="#333" font-weight="600">富士見坂</text>
-  <text x="288" y="384" text-anchor="middle" font-size="10" fill="#333" font-weight="600">校舎</text>
-  <text x="288" y="398" text-anchor="middle" font-size="9" fill="#666">(F)</text>
-  <!-- Badge F -->
-  <circle id="badge-F" cx="313" cy="326" r="11" fill="#FF6600" stroke="#fff" stroke-width="1.5"/>
-  <text id="badge-F-text" x="313" y="330" text-anchor="middle" font-size="9" fill="#fff" font-weight="700">0</text>
+<circle id="badge-Y" cx="174" cy="389" r="13" fill="#FF6600"/>
+<text id="badge-text-Y" x="174" y="393" fill="#fff" font-size="10" text-anchor="middle" font-weight="700"></text>
 
-  <!-- Central plaza label -->
-  <text x="210" y="240" text-anchor="middle" font-size="9" fill="#aaa" font-style="italic">中央広場</text>
+<circle id="badge-F" cx="329" cy="219" r="13" fill="#FF6600"/>
+<text id="badge-text-F" x="329" y="223" fill="#fff" font-size="10" text-anchor="middle" font-weight="700"></text>
+
+<!-- Gates -->
+<circle cx="40" cy="430" r="5" fill="#CC0000"/>
+<text x="56" y="433" fill="#CC0000" font-size="8" font-weight="600">BT門</text>
+
+<circle cx="100" cy="200" r="5" fill="#CC0000"/>
+<text x="80" y="195" fill="#CC0000" font-size="8" font-weight="600">正門</text>
+
+<circle cx="180" cy="100" r="5" fill="#CC0000"/>
+<text x="168" y="92" fill="#CC0000" font-size="8" font-weight="600">外濠校舎門</text>
+
+<circle cx="330" cy="250" r="5" fill="#CC0000"/>
+<text x="305" y="305" fill="#CC0000" font-size="8" font-weight="600">富士見坂校舎門</text>
+
+<!-- Compass -->
+<g transform="translate(320,85)">
+  <text x="0" y="-5" fill="#00205B" font-size="16" text-anchor="middle" font-weight="400">↑</text>
+  <text x="0" y="8" fill="#00205B" font-size="11" text-anchor="middle" font-weight="700">N</text>
+</g>
+
+<!-- Station labels -->
+<text x="15" y="470" fill="#666" font-size="9" font-weight="600">← 市ヶ谷駅</text>
+<text x="270" y="82" fill="#666" font-size="9" font-weight="600">飯田橋駅 →</text>
 </svg>
 </div>
 
-<div class="controls">
-  <div class="control-row">
-    <label>曜日</label>
-    <button class="btn day-btn" data-day="月">月</button>
-    <button class="btn day-btn" data-day="火">火</button>
-    <button class="btn day-btn" data-day="水">水</button>
-    <button class="btn day-btn" data-day="木">木</button>
-    <button class="btn day-btn" data-day="金">金</button>
-    <button class="btn day-btn" data-day="土">土</button>
-  </div>
-  <div class="control-row">
-    <label>時限</label>
-    <button class="btn period-btn" data-period="1限">1限</button>
-    <button class="btn period-btn" data-period="2限">2限</button>
-    <button class="btn period-btn" data-period="3限">3限</button>
-    <button class="btn period-btn" data-period="4限">4限</button>
-    <button class="btn period-btn" data-period="5限">5限</button>
-    <button class="btn period-btn" data-period="6限">6限</button>
-    <button class="btn period-btn" data-period="7限">7限</button>
-  </div>
-  <div class="control-row">
-    <button id="showAllBtn" class="btn-show-all">すべての建物</button>
-  </div>
+<div class="results" id="results">
+<div class="no-selection">建物をタップして空き教室を確認</div>
 </div>
-
-<div class="results" id="results"></div>
 
 <script>
 const DATA = {"free":{"月":{"1限":{"ボアソナードタワー":["BT0300","BT0308","BT0309","BT0502","BT0503","BT0504","BT0505","BT0506","BT0507","BT0508","BT0509","BT0601","BT0602","BT0603","BT0604","BT0605","BT0606","BT0608","BT0609","BT0610","BT0701","BT0702","BT0704","BT0705","BT0800","BT0801","BT0802","BT0803","BT0804","BT0805","BT0806","BT0900","BT0901","BT0902","BT0903","BT0904","BT0905","BT0906","BT0907","BT1000","BT1001","BT1002","BT1003","BT1004","BT1005","BT1006","BT1007","BT1100","BT1101","BT1102","BT1103","BT1200","BT1204","BT1300"],"富士見坂校舎":["F301","F302","F303","F304","F305","F306","F307","F308","F309","F310","F311","F401","F402","F404","F405","F406","F407","F408","F501","F502","F503","F504","F505","F506","F507","F508"],"富士見ゲート":["G201","G401","G402","G403","G502","G601"],"外濠校舎":["S201","S202","S203","S204","S205","S301","S302","S303","S304","S305","S306","S307","S401","S402","S403","S404","S405","S407","S501","S502","S503","S504","S505","S601","S602","S603"],"大内山校舎":["Y401","Y402","Y404","Y405","Y501","Y502","Y503","Y504","Y505","Y506","Y601","Y603","Y604","Y605","Y606","Y701","Y702","Y703","Y704","Y801","Y802","Y803","Y804","Y805"]},"2限":{"ボアソナードタワー":["BT0300","BT0308","BT0309","BT0502","BT0503","BT0504","BT0505","BT0506","BT0507","BT0508","BT0509","BT0601","BT0602","BT0603","BT0604","BT0605","BT0606","BT0608","BT0609","BT0701","BT0702","BT0704","BT0800","BT0801","BT0802","BT0803","BT0804","BT0805","BT0806","BT0901","BT0903","BT0905","BT0907","BT1000","BT1004","BT1005","BT1006","BT1007","BT1100","BT1101","BT1103","BT1200","BT1204","BT1300"],"富士見坂校舎":["F301","F303","F304","F306","F308","F309","F401","F402","F404","F405","F406","F407","F408","F501","F502","F503","F504","F505","F506","F507","F508"],"富士見ゲート":["G402","G403","G601"],"外濠校舎":["S201","S202","S203","S204","S301","S302","S303","S304","S401","S402","S403","S404","S501","S502","S503","S505","S601","S602","S603"],"大内山校舎":["Y401","Y402","Y403","Y501","Y502","Y504","Y601","Y602","Y603","Y606","Y701","Y703","Y705","Y801","Y802"]},"3限":{"ボアソナードタワー":["BT0300","BT0308","BT0309","BT0501","BT0502","BT0503","BT0505","BT0506","BT0508","BT0601","BT0604","BT0605","BT0609","BT0701","BT0702","BT0704","BT0705","BT0800","BT0802","BT0803","BT0804","BT0806","BT0900","BT0901","BT0903","BT0904","BT0905","BT0906","BT1000","BT1002","BT1004","BT1005","BT1006","BT1007","BT1100","BT1101","BT1102","BT1103","BT1200","BT1204","BT1300"],"富士見坂校舎":["F301","F302","F303","F304","F305","F306","F310","F311","F403","F404","F405","F406","F407","F408","F501","F502","F503","F504","F505","F507","F508"],"富士見ゲート":["G201","G402","G501","G503","G601","G602"],"外濠校舎":["S202","S203","S204","S205","S301","S303","S305","S401","S402","S403","S404","S405","S502","S503","S504","S601","S602","S603"],"大内山校舎":["Y401","Y402","Y403","Y404","Y405","Y501","Y502","Y503","Y504","Y505","Y506","Y602","Y603","Y701","Y704","Y801","Y804"]},"4限":{"ボアソナードタワー":["BT0300","BT0308","BT0309","BT0501","BT0502","BT0503","BT0504","BT0506","BT0508","BT0509","BT0601","BT0604","BT0606","BT0608","BT0609","BT0610","BT0702","BT0802","BT0803","BT0804","BT0900","BT0903","BT0904","BT0905","BT1000","BT1001","BT1002","BT1003","BT1005","BT1006","BT1100","BT1101","BT1102","BT1103","BT1200","BT1204","BT1300"],"富士見坂校舎":["F301","F303","F304","F305","F306","F310","F311","F401","F402","F404","F405","F406","F407","F408","F501","F502","F503","F505"],"富士見ゲート":["G401","G501","G503","G601","G602"],"外濠校舎":["S202","S203","S204","S205","S306","S401","S402","S403","S404","S501","S502","S503","S504","S601","S602"],"大内山校舎":["Y401","Y402","Y403","Y405","Y406","Y503","Y601","Y602","Y603","Y605","Y704","Y801","Y802","Y804"]},"5限":{"ボアソナードタワー":["BT0300","BT0308","BT0309","BT0501","BT0502","BT0503","BT0505","BT0506","BT0507","BT0508","BT0509","BT0601","BT0602","BT0603","BT0604","BT0606","BT0608","BT0609","BT0610","BT0701","BT0702","BT0705","BT0706","BT0800","BT0801","BT0802","BT0804","BT0806","BT0900","BT0901","BT0903","BT0904","BT0905","BT0906","BT1000","BT1001","BT1002","BT1004","BT1005","BT1006","BT1007","BT1100","BT1101","BT1102","BT1103","BT1200","BT1204","BT1300"],"富士見坂校舎":["F301","F302","F303","F304","F305","F307","F309","F311","F402","F403","F404","F405","F406","F407","F408","F501","F502","F503","F504","F507"],"富士見ゲート":["G401","G403","G502","G503","G601","G602"],"外濠校舎":["S202","S203","S204","S205","S301","S303","S304","S305","S306","S307","S401","S402","S403","S404","S405","S406","S407","S501","S502","S503","S504","S505","S601","S602","S603"],"大内山校舎":["Y401","Y402","Y403","Y404","Y405","Y406","Y501","Y502","Y503","Y504","Y505","Y506","Y601","Y602","Y603","Y604","Y605","Y606","Y701","Y704","Y801","Y802","Y803","Y804","Y805"]},"6限":{"ボアソナードタワー":["BT0300","BT0308","BT0309","BT0502","BT0503","BT0504","BT0505","BT0506","BT0507","BT0508","BT0509","BT0601","BT0602","BT0603","BT0604","BT0605","BT0606","BT0608","BT0609","BT0610","BT0701","BT0702","BT0704","BT0705","BT0706","BT0800","BT0801","BT0802","BT0803","BT0804","BT0805","BT0806","BT0900","BT0901","BT0902","BT0903","BT0904","BT0905","BT0906","BT0907","BT1000","BT1001","BT1002","BT1003","BT1004","BT1005","BT1006","BT1007","BT1100","BT1101","BT1102","BT1103","BT1200","BT1204","BT1300"],"富士見坂校舎":["F301","F302","F303","F304","F305","F306","F307","F308","F309","F310","F311","F401","F402","F403","F405","F406","F407","F408","F501","F502","F503","F504","F505","F506","F507","F508"],"富士見ゲート":["G201","G401","G402","G403","G501","G502","G503","G601","G602"],"外濠校舎":["S202","S203","S204","S205","S301","S302","S303","S304","S305","S306","S307","S401","S402","S403","S404","S405","S406","S407","S501","S502","S503","S504","S505","S601","S602","S603"],"大内山校舎":["Y401","Y402","Y403","Y404","Y405","Y406","Y501","Y502","Y503","Y504","Y505","Y506","Y601","Y602","Y603","Y604","Y605","Y606","Y701","Y702","Y703","Y704","Y705","Y801","Y802","Y803","Y804","Y805"]},"7限":{"ボアソナードタワー":["BT0300","BT0308","BT0309","BT0501","BT0502","BT0503","BT0504","BT0505","BT0506","BT0507","BT0508","BT0509","BT0601","BT0602","BT0603","BT0604","BT0605","BT0606","BT0608","BT0609","BT0610","BT0701","BT0702","BT0704","BT0705","BT0706","BT0800","BT0801","BT0802","BT0803","BT0804","BT0805","BT0806","BT0900","BT0901","BT0902","BT0903","BT0904","BT0905","BT0906","BT0907","BT1000","BT1001","BT1002","BT1003","BT1004","BT1005","BT1006","BT1007","BT1100","BT1101","BT1102","BT1103","BT1200","BT1204","BT1300"],"富士見坂校舎":["F301","F302","F303","F304","F305","F306","F307","F308","F309","F310","F311","F401","F402","F403","F404","F405","F406","F407","F408","F501","F502","F503","F504","F505","F506","F507","F508"],"富士見ゲート":["G201","G401","G402","G403","G501","G502","G503","G601","G602"],"外濠校舎":["S201","S202","S203","S204","S205","S301","S302","S303","S304","S305","S306","S307","S401","S402","S403","S404","S405","S406","S407","S501","S502","S503","S504","S505","S601","S602","S603"],"大内山校舎":["Y401","Y402","Y403","Y404","Y405","Y406","Y501","Y502","Y503","Y504","Y505","Y506","Y601","Y602","Y603","Y604","Y605","Y606","Y701","Y702","Y703","Y704","Y705","Y801","Y802","Y803","Y804","Y805"]}},"火":{"1限":{"ボアソナードタワー":["BT0300","BT0308","BT0309","BT0501","BT0502","BT0503","BT0504","BT0505","BT0506","BT0507","BT0508","BT0509","BT0601","BT0602","BT0604","BT0605","BT0606","BT0608","BT0609","BT0701","BT0702","BT0704","BT0705","BT0706","BT0800","BT0801","BT0802","BT0803","BT0804","BT0805","BT0806","BT0900","BT0901","BT0903","BT0904","BT0905","BT0906","BT0907","BT1000","BT1001","BT1002","BT1003","BT1004","BT1005","BT1006","BT1007","BT1100","BT1101","BT1102","BT1103","BT1200","BT1204","BT1300"],"富士見坂校舎":["F301","F302","F303","F304","F305","F306","F307","F308","F309","F310","F311","F401","F402","F403","F404","F405","F406","F407","F408","F501","F502","F503","F504","F506","F507","F508"],"富士見ゲート":["G401","G402","G502","G503","G601","G602"],"外濠校舎":["S201","S202","S203","S204","S205","S301","S302","S303","S304","S305","S306","S401","S402","S403","S404","S405","S406","S407","S501","S502","S503","S504","S505","S601","S602","S603"],"大内山校舎":["Y401","Y402","Y403","Y404","Y405","Y406","Y501","Y502","Y503","Y504","Y601","Y602","Y603","Y604","Y701","Y702","Y703","Y704","Y705","Y801","Y802","Y803","Y804","Y805"]},"2限":{"ボアソナードタワー":["BT0300","BT0308","BT0309","BT0502","BT0504","BT0506","BT0507","BT0508","BT0601","BT0602","BT0604","BT0605","BT0606","BT0608","BT0704","BT0705","BT0800","BT0801","BT0802","BT0803","BT0804","BT0805","BT0900","BT0901","BT0903","BT0906","BT0907","BT1000","BT1001","BT1003","BT1005","BT1006","BT1100","BT1102","BT1200","BT1204","BT1300"],"富士見坂校舎":["F301","F302","F303","F304","F305","F306","F307","F308","F311","F401","F402","F404","F405","F407","F408","F501","F502","F503","F505","F506","F507"],"富士見ゲート":["G201","G401","G402","G501"],"外濠校舎":["S201","S202","S203","S204","S205","S301","S302","S303","S304","S305","S401","S402","S403","S404","S501","S502","S503","S504","S601","S602","S603"],"大内山校舎":["Y405","Y501","Y601","Y603","Y701","Y704","Y801","Y802"]},"3限":{"ボアソナードタワー":["BT0300","BT0308","BT0503","BT0504","BT0506","BT0508","BT0608","BT0609","BT0704","BT0705","BT0800","BT0801","BT0806","BT0900","BT0903","BT0907","BT1000","BT1001","BT1002","BT1003","BT1006","BT1100","BT1102","BT1200","BT1300"],"富士見坂校舎":["F302","F307","F308","F401","F402","F404","F406","F407","F408","F501","F502","F503","F504"],"富士見ゲート":["G201","G402","G502","G601"],"外濠校舎":["S201","S202","S203","S204","S205","S303","S304","S401","S403","S404","S502","S504","S601","S602"],"大内山校舎":["Y401","Y501","Y503","Y505","Y604","Y701","Y801","Y802"]},"4限":{"ボアソナードタワー":["BT0300","BT0308","BT0309","BT0502","BT0503","BT0505","BT0507","BT0508","BT0601","BT0602","BT0608","BT0609","BT0610","BT0704","BT0706","BT0800","BT0802","BT0804","BT0805","BT0900","BT0902","BT0904","BT1000","BT1002","BT1005","BT1007","BT1100","BT1101","BT1200","BT1300"],"富士見坂校舎":["F302","F303","F305","F306","F307","F309","F401","F402","F405","F406","F407","F408","F505","F506","F507","F508"],"富士見ゲート":["G201","G403","G502","G503","G601"],"外濠校舎":["S204","S205","S301","S402","S404","S405","S505","S601"],"大内山校舎":["Y402","Y403","Y405","Y406","Y501","Y502","Y505","Y506","Y602","Y603","Y605","Y606","Y701","Y702","Y802","Y804","Y805"]},"5限":{"ボアソナードタワー":["BT0300","BT0308","BT0309","BT0501","BT0503","BT0505","BT0506","BT0507","BT0508","BT0509","BT0601","BT0604","BT0605","BT0608","BT0609","BT0610","BT0701","BT0702","BT0704","BT0705","BT0706","BT0800","BT0801","BT0804","BT0900","BT0901","BT0902","BT0903","BT0905","BT0906","BT1000","BT1001","BT1004","BT1006","BT1007","BT1100","BT1102","BT1200","BT1204","BT1300"],"富士見坂校舎":["F301","F302","F303","F305","F307","F308","F309","F310","F311","F404","F405","F407","F408","F501","F502","F503","F504","F507","F508"],"富士見ゲート":["G502","G601","G602"],"外濠校舎":["S202","S203","S204","S301","S302","S303","S304","S305","S307","S401","S403","S404","S405","S407","S501","S503","S504","S505","S603"],"大内山校舎":["Y402","Y403","Y406","Y501","Y503","Y506","Y601","Y604","Y606","Y703","Y705","Y801","Y803","Y804","Y805"]},"6限":{"ボアソナードタワー":["BT0300","BT0308","BT0309","BT0501","BT0502","BT0503","BT0504","BT0505","BT0506","BT0507","BT0508","BT0509","BT0601","BT0602","BT0603","BT0604","BT0605","BT0606","BT0609","BT0610","BT0701","BT0702","BT0704","BT0705","BT0706","BT0800","BT0801","BT0802","BT0803","BT0804","BT0805","BT0806","BT0900","BT0901","BT0902","BT0903","BT0904","BT0905","BT0906","BT0907","BT1000","BT1001","BT1002","BT1003","BT1004","BT1005","BT1006","BT1007","BT1100","BT1101","BT1102","BT1103","BT1200","BT1204","BT1300"],"富士見坂校舎":["F301","F302","F303","F304","F305","F306","F307","F308","F309","F310","F311","F401","F402","F403","F404","F405","F406","F407","F408","F501","F502","F503","F504","F505","F506","F507","F508"],"富士見ゲート":["G201","G401","G402","G403","G501","G502","G601","G602"],"外濠校舎":["S201","S202","S203","S204","S205","S301","S302","S303","S304","S305","S306","S307","S401","S402","S403","S404","S405","S406","S407","S501","S502","S503","S504","S505","S601","S602","S603"],"大内山校舎":["Y401","Y402","Y403","Y404","Y405","Y501","Y502","Y503","Y504","Y505","Y506","Y601","Y602","Y603","Y604","Y605","Y701","Y702","Y704","Y705","Y801","Y802","Y803","Y804","Y805"]},"7限":{"ボアソナードタワー":["BT0300","BT0308","BT0309","BT0501","BT0502","BT0503","BT0504","BT0505","BT0506","BT0507","BT0508","BT0509","BT0601","BT0602","BT0603","BT0604","BT0605","BT0606","BT0608","BT0609","BT0610","BT0701","BT0702","BT0704","BT0705","BT0706","BT0800","BT0801","BT0802","BT0803","BT0804","BT0805","BT0806","BT0900","BT0901","BT0902","BT0903","BT0904","BT0905","BT0906","BT0907","BT1000","BT1001","BT1002","BT1003","BT1004","BT1005","BT1006","BT1007","BT1100","BT1101","BT1102","BT1103","BT1200","BT1204","BT1300"],"富士見坂校舎":["F301","F302","F303","F304","F305","F306","F307","F308","F309","F310","F311","F401","F402","F403","F404","F405","F406","F407","F408","F501","F502","F503","F504","F505","F506","F507","F508"],"富士見ゲート":["G201","G401","G402","G403","G501","G502","G503","G601","G602"],"外濠校舎":["S201","S202","S203","S204","S205","S301","S302","S303","S304","S305","S306","S307","S401","S402","S403","S404","S405","S406","S407","S501","S502","S503","S504","S505","S601","S602","S603"],"大内山校舎":["Y401","Y402","Y403","Y404","Y405","Y406","Y501","Y502","Y503","Y504","Y505","Y506","Y601","Y602","Y603","Y604","Y605","Y606","Y701","Y702","Y703","Y704","Y705","Y801","Y802","Y803","Y804","Y805"]}},"水":{"1限":{"ボアソナードタワー":["BT0300","BT0308","BT0309","BT0501","BT0502","BT0503","BT0504","BT0505","BT0506","BT0508","BT0509","BT0601","BT0602","BT0603","BT0604","BT0608","BT0609","BT0610","BT0701","BT0702","BT0704","BT0705","BT0706","BT0800","BT0801","BT0802","BT0804","BT0805","BT0806","BT0900","BT0901","BT0902","BT0903","BT0905","BT0906","BT0907","BT1000","BT1001","BT1002","BT1003","BT1005","BT1006","BT1007","BT1100","BT1101","BT1102","BT1103","BT1200","BT1204","BT1300"],"富士見坂校舎":["F302","F303","F304","F305","F306","F307","F308","F310","F311","F401","F402","F403","F404","F405","F406","F407","F408","F501","F502","F503","F504","F505","F506","F507","F508"],"富士見ゲート":["G201","G401","G403","G501","G502","G601","G602"],"外濠校舎":["S201","S202","S203","S204","S205","S301","S303","S307","S401","S402","S403","S405","S406","S407","S501","S502","S504","S505","S601","S602","S603"],"大内山校舎":["Y401","Y402","Y403","Y405","Y502","Y503","Y505","Y506","Y601","Y603","Y604","Y701","Y702","Y703","Y704","Y705","Y801","Y802","Y803","Y804","Y805"]},"2限":{"ボアソナードタワー":["BT0300","BT0308","BT0309","BT0501","BT0503","BT0506","BT0508","BT0601","BT0602","BT0603","BT0605","BT0608","BT0610","BT0701","BT0702","BT0704","BT0705","BT0800","BT0803","BT0804","BT0806","BT0900","BT0901","BT0903","BT0905","BT0906","BT1000","BT1001","BT1003","BT1004","BT1005","BT1006","BT1100","BT1200","BT1204","BT1300"],"富士見坂校舎":["F301","F303","F304","F305","F306","F307","F308","F310","F401","F403","F404","F405","F406","F407","F408","F501","F502","F503","F504","F505","F506","F507","F508"],"富士見ゲート":["G401","G502","G602"],"外濠校舎":["S201","S203","S204","S301","S303","S304","S307","S401","S402","S403","S501","S502","S503","S601","S603"],"大内山校舎":["Y401","Y403","Y404","Y501","Y502","Y503","Y506","Y601","Y602","Y603","Y604","Y701","Y702","Y802","Y805"]},"3限":{"ボアソナードタワー":["BT0300","BT0308","BT0309","BT0501","BT0506","BT0508","BT0509","BT0605","BT0606","BT0704","BT0705","BT0800","BT0801","BT0804","BT0805","BT0900","BT0902","BT0903","BT0904","BT0905","BT0906","BT1000","BT1002","BT1005","BT1007","BT1100","BT1101","BT1102","BT1103","BT1200","BT1204","BT1300"],"富士見坂校舎":["F304","F305","F306","F308","F309","F310","F401","F402","F403","F404","F405","F406","F407","F408","F501","F502","F503","F504","F505","F506","F507","F508"],"富士見ゲート":["G201","G403"],"外濠校舎":["S201","S202","S203","S204","S205","S301","S303","S403","S404","S501","S502","S504","S505","S601","S602","S603"],"大内山校舎":["Y401","Y402","Y403","Y406","Y502","Y503","Y505","Y506","Y603","Y701","Y704","Y705","Y801","Y803","Y804","Y805"]},"4限":{"ボアソナードタワー":["BT0300","BT0308","BT0309","BT0502","BT0505","BT0508","BT0509","BT0601","BT0602","BT0604","BT0608","BT0704","BT0706","BT0800","BT0801","BT0804","BT0900","BT0906","BT1000","BT1001","BT1003","BT1005","BT1100","BT1101","BT1103","BT1200","BT1204","BT1300"],"富士見坂校舎":["F301","F305","F306","F307","F308","F310","F311","F401","F402","F403","F404","F405","F501","F502","F503","F504","F505","F507"],"富士見ゲート":["G201","G402","G403","G601","G602"],"外濠校舎":["S203","S204","S205","S301","S302","S405","S406","S407","S501","S502","S503","S601","S602","S603"],"大内山校舎":["Y401","Y402","Y405","Y406","Y501","Y502","Y503","Y505","Y601","Y603","Y604","Y701","Y704","Y705","Y801","Y802","Y803","Y804"]},"5限":{"ボアソナードタワー":["BT0300","BT0308","BT0309","BT0501","BT0502","BT0503","BT0504","BT0506","BT0507","BT0508","BT0509","BT0601","BT0603","BT0605","BT0610","BT0701","BT0702","BT0705","BT0800","BT0801","BT0802","BT0803","BT0805","BT0806","BT0900","BT0901","BT0902","BT0903","BT0904","BT0905","BT0906","BT0907","BT1000","BT1002","BT1003","BT1004","BT1005","BT1006","BT1007","BT1100","BT1101","BT1102","BT1103","BT1200","BT1300"],"富士見坂校舎":["F301","F302","F303","F308","F309","F311","F401","F402","F403","F404","F407","F408","F502","F504","F505","F507"],"富士見ゲート":["G402","G403","G501","G502","G503","G601"],"外濠校舎":["S201","S202","S203","S204","S205","S301","S302","S303","S304","S305","S306","S307","S401","S402","S403","S404","S405","S406","S407","S502","S503","S504","S505","S602","S603"],"大内山校舎":["Y401","Y402","Y403","Y404","Y405","Y406","Y501","Y502","Y505","Y601","Y602","Y603","Y604","Y606","Y701","Y702","Y703","Y704","Y801","Y802","Y803","Y804","Y805"]},"6限":{"ボアソナードタワー":["BT0300","BT0308","BT0309","BT0501","BT0502","BT0503","BT0504","BT0505","BT0506","BT0507","BT0508","BT0509","BT0601","BT0602","BT0603","BT0604","BT0605","BT0606","BT0608","BT0609","BT0610","BT0701","BT0702","BT0704","BT0705","BT0706","BT0800","BT0801","BT0802","BT0803","BT0804","BT0805","BT0806","BT0900","BT0901","BT0902","BT0903","BT0904","BT0905","BT0906","BT0907","BT1000","BT1001","BT1002","BT1003","BT1004","BT1005","BT1006","BT1007","BT1100","BT1101","BT1102","BT1103","BT1200","BT1204","BT1300"],"富士見坂校舎":["F301","F302","F303","F304","F305","F306","F307","F308","F309","F310","F311","F401","F402","F403","F404","F405","F406","F407","F408","F501","F502","F503","F504","F505","F506","F507","F508"],"富士見ゲート":["G201","G401","G402","G403","G501","G502","G503","G601","G602"],"外濠校舎":["S201","S202","S203","S205","S301","S302","S303","S304","S305","S306","S401","S402","S403","S404","S405","S406","S407","S501","S502","S503","S504","S505","S601","S602","S603"],"大内山校舎":["Y401","Y402","Y403","Y404","Y405","Y406","Y501","Y502","Y503","Y504","Y505","Y506","Y601","Y602","Y603","Y604","Y605","Y606","Y701","Y702","Y703","Y704","Y705","Y801","Y802","Y803","Y804","Y805"]},"7限":{"ボアソナードタワー":["BT0300","BT0308","BT0309","BT0501","BT0502","BT0503","BT0504","BT0505","BT0506","BT0507","BT0508","BT0509","BT0601","BT0602","BT0603","BT0604","BT0605","BT0606","BT0608","BT0609","BT0610","BT0701","BT0702","BT0704","BT0705","BT0706","BT0800","BT0801","BT0802","BT0803","BT0804","BT0805","BT0806","BT0900","BT0901","BT0902","BT0903","BT0904","BT0905","BT0906","BT0907","BT1000","BT1001","BT1002","BT1003","BT1004","BT1005","BT1006","BT1007","BT1100","BT1101","BT1102","BT1103","BT1200","BT1204","BT1300"],"富士見坂校舎":["F301","F302","F303","F304","F305","F306","F307","F308","F309","F310","F311","F401","F402","F403","F404","F405","F406","F407","F408","F501","F502","F503","F504","F505","F506","F507","F508"],"富士見ゲート":["G201","G401","G402","G403","G501","G502","G503","G601","G602"],"外濠校舎":["S201","S202","S203","S204","S205","S301","S302","S303","S304","S305","S306","S307","S401","S402","S403","S404","S405","S406","S407","S501","S502","S503","S504","S505","S601","S602","S603"],"大内山校舎":["Y401","Y402","Y403","Y404","Y405","Y406","Y501","Y502","Y503","Y504","Y505","Y506","Y601","Y602","Y603","Y604","Y605","Y606","Y701","Y702","Y703","Y704","Y705","Y801","Y802","Y803","Y804","Y805"]}},"木":{"1限":{"ボアソナードタワー":["BT0300","BT0308","BT0309","BT0501","BT0502","BT0503","BT0504","BT0505","BT0506","BT0507","BT0508","BT0509","BT0601","BT0602","BT0603","BT0604","BT0605","BT0606","BT0608","BT0609","BT0610","BT0701","BT0702","BT0704","BT0705","BT0706","BT0800","BT0801","BT0802","BT0803","BT0804","BT0805","BT0806","BT0900","BT0901","BT0902","BT0903","BT0904","BT0905","BT0906","BT0907","BT1000","BT1001","BT1002","BT1003","BT1004","BT1005","BT1006","BT1007","BT1100","BT1101","BT1102","BT1103","BT1200","BT1204","BT1300"],"富士見坂校舎":["F301","F302","F303","F304","F305","F306","F307","F308","F309","F310","F311","F401","F402","F403","F404","F405","F406","F407","F501","F502","F503","F504","F505","F506","F507","F508"],"富士見ゲート":["G201","G401","G402","G403","G501","G503","G601","G602"],"外濠校舎":["S201","S202","S203","S204","S205","S301","S302","S303","S304","S401","S402","S403","S404","S406","S407","S501","S502","S503","S504","S505","S601","S602","S603"],"大内山校舎":["Y401","Y402","Y403","Y404","Y405","Y501","Y502","Y503","Y504","Y505","Y506","Y601","Y602","Y604","Y701","Y702","Y703","Y705","Y801","Y802","Y803","Y804","Y805"]},"2限":{"ボアソナードタワー":["BT0300","BT0308","BT0309","BT0503","BT0504","BT0506","BT0507","BT0508","BT0509","BT0602","BT0604","BT0605","BT0606","BT0608","BT0609","BT0702","BT0704","BT0705","BT0706","BT0800","BT0802","BT0804","BT0806","BT0900","BT0901","BT0902","BT0904","BT0905","BT0907","BT1000","BT1003","BT1004","BT1006","BT1007","BT1100","BT1101","BT1102","BT1103","BT1200","BT1204","BT1300"],"富士見坂校舎":["F301","F302","F303","F304","F305","F306","F308","F309","F311","F401","F402","F403","F404","F405","F407","F502","F503","F504","F507","F508"],"富士見ゲート":["G401","G402","G601","G602"],"外濠校舎":["S201","S202","S203","S204","S301","S302","S303","S304","S307","S401","S402","S403","S404","S501","S502","S503","S504","S601","S603"],"大内山校舎":["Y401","Y402","Y403","Y502","Y504","Y505","Y601","Y602","Y603","Y604","Y705","Y802","Y804"]},"3限":{"ボアソナードタワー":["BT0300","BT0308","BT0503","BT0504","BT0505","BT0506","BT0508","BT0509","BT0609","BT0610","BT0704","BT0800","BT0801","BT0802","BT0804","BT0805","BT0900","BT0903","BT0907","BT1000","BT1001","BT1002","BT1003","BT1007","BT1100","BT1101","BT1102","BT1103","BT1200","BT1300"],"富士見坂校舎":["F301","F302","F304","F305","F306","F307","F308","F311","F401","F402","F403","F404","F407","F408","F501","F502","F505"],"富士見ゲート":["G401","G402"],"外濠校舎":["S202","S204","S301","S303","S304","S305","S306","S401","S402","S403","S404","S406","S502","S503","S505","S602"],"大内山校舎":["Y401","Y403","Y405","Y502","Y503","Y506","Y602","Y604","Y605","Y702","Y703","Y704","Y801","Y803","Y805"]},"4限":{"ボアソナードタワー":["BT0300","BT0308","BT0501","BT0503","BT0504","BT0506","BT0507","BT0509","BT0606","BT0702","BT0704","BT0800","BT0801","BT0803","BT0900","BT1000","BT1002","BT1003","BT1006","BT1007","BT1100","BT1101","BT1200","BT1204","BT1300"],"富士見坂校舎":["F301","F302","F303","F304","F306","F308","F309","F311","F402","F403","F404","F405","F408","F501","F503","F504","F505","F506","F507"],"富士見ゲート":["G401","G502","G503","G601","G602"],"外濠校舎":["S202","S203","S204","S205","S302","S303","S306","S401","S404","S407","S501","S502","S503","S602","S603"],"大内山校舎":["Y401","Y405","Y406","Y501","Y502","Y503","Y504","Y601","Y602","Y603","Y605","Y701","Y703","Y704","Y705","Y801","Y804","Y805"]},"5限":{"ボアソナードタワー":["BT0300","BT0308","BT0309","BT0501","BT0502","BT0503","BT0505","BT0507","BT0508","BT0509","BT0601","BT0602","BT0604","BT0605","BT0606","BT0608","BT0609","BT0610","BT0701","BT0704","BT0705","BT0706","BT0800","BT0801","BT0802","BT0803","BT0804","BT0805","BT0806","BT0900","BT0901","BT0902","BT0904","BT0906","BT0907","BT1000","BT1001","BT1002","BT1003","BT1004","BT1005","BT1006","BT1007","BT1100","BT1101","BT1102","BT1200","BT1204","BT1300"],"富士見坂校舎":["F302","F303","F304","F305","F307","F308","F310","F311","F401","F402","F404","F405","F502","F503","F504","F506","F508"],"富士見ゲート":["G401","G402","G502","G503","G601","G602"],"外濠校舎":["S203","S204","S205","S301","S302","S303","S304","S305","S306","S307","S401","S402","S403","S404","S405","S406","S407","S501","S503","S504","S505","S601","S602","S603"],"大内山校舎":["Y401","Y404","Y405","Y406","Y501","Y503","Y505","Y601","Y602","Y603","Y604","Y605","Y606","Y701","Y704","Y705","Y801","Y803","Y805"]},"6限":{"ボアソナードタワー":["BT0300","BT0308","BT0309","BT0501","BT0502","BT0503","BT0504","BT0505","BT0506","BT0507","BT0508","BT0509","BT0601","BT0602","BT0603","BT0604","BT0605","BT0606","BT0608","BT0609","BT0610","BT0701","BT0702","BT0704","BT0705","BT0706","BT0800","BT0801","BT0802","BT0803","BT0804","BT0805","BT0806","BT0900","BT0901","BT0902","BT0903","BT0904","BT0905","BT0906","BT0907","BT1000","BT1001","BT1002","BT1003","BT1004","BT1005","BT1006","BT1007","BT1100","BT1101","BT1102","BT1103","BT1200","BT1204","BT1300"],"富士見坂校舎":["F301","F302","F303","F304","F305","F306","F307","F308","F309","F310","F311","F401","F402","F403","F404","F405","F406","F407","F408","F501","F502","F503","F504","F505","F506","F507","F508"],"富士見ゲート":["G201","G401","G402","G403","G501","G502","G503","G601","G602"],"外濠校舎":["S201","S202","S203","S204","S205","S301","S302","S303","S304","S305","S306","S307","S401","S402","S403","S404","S405","S406","S501","S502","S503","S504","S505","S601","S602","S603"],"大内山校舎":["Y401","Y402","Y403","Y406","Y501","Y502","Y503","Y505","Y601","Y602","Y603","Y604","Y605","Y606","Y701","Y702","Y703","Y704","Y705","Y801","Y802","Y803","Y804","Y805"]},"7限":{"ボアソナードタワー":["BT0300","BT0308","BT0309","BT0501","BT0502","BT0503","BT0504","BT0505","BT0506","BT0507","BT0508","BT0509","BT0601","BT0602","BT0603","BT0604","BT0605","BT0606","BT0608","BT0609","BT0610","BT0701","BT0702","BT0704","BT0705","BT0706","BT0800","BT0801","BT0802","BT0803","BT0804","BT0805","BT0806","BT0900","BT0901","BT0902","BT0903","BT0904","BT0905","BT0906","BT0907","BT1000","BT1001","BT1002","BT1003","BT1004","BT1005","BT1006","BT1007","BT1100","BT1101","BT1102","BT1103","BT1200","BT1204","BT1300"],"富士見坂校舎":["F301","F302","F303","F304","F305","F306","F307","F308","F309","F310","F311","F401","F402","F403","F404","F405","F406","F407","F408","F501","F502","F503","F504","F505","F506","F507","F508"],"富士見ゲート":["G201","G401","G402","G403","G501","G502","G503","G601","G602"],"外濠校舎":["S201","S202","S203","S204","S205","S301","S302","S303","S304","S305","S306","S307","S401","S402","S403","S404","S405","S406","S407","S501","S502","S503","S504","S505","S601","S602","S603"],"大内山校舎":["Y401","Y402","Y403","Y404","Y405","Y406","Y501","Y502","Y503","Y504","Y505","Y506","Y601","Y602","Y603","Y604","Y605","Y606","Y701","Y702","Y703","Y704","Y705","Y801","Y802","Y803","Y804","Y805"]}},"金":{"1限":{"ボアソナードタワー":["BT0300","BT0308","BT0309","BT0501","BT0502","BT0503","BT0504","BT0505","BT0506","BT0507","BT0508","BT0509","BT0601","BT0602","BT0603","BT0604","BT0605","BT0606","BT0608","BT0609","BT0610","BT0701","BT0702","BT0704","BT0705","BT0800","BT0801","BT0802","BT0803","BT0804","BT0900","BT0901","BT0902","BT0903","BT0904","BT0905","BT0906","BT0907","BT1000","BT1001","BT1002","BT1003","BT1004","BT1005","BT1006","BT1007","BT1100","BT1101","BT1102","BT1103","BT1200","BT1204","BT1300"],"富士見坂校舎":["F301","F302","F303","F304","F305","F306","F307","F308","F309","F310","F311","F401","F402","F403","F404","F405","F406","F407","F408","F502","F503","F504","F505","F506","F507","F508"],"富士見ゲート":["G201","G401","G402","G403","G502","G601"],"外濠校舎":["S201","S202","S203","S204","S205","S301","S302","S303","S304","S306","S307","S401","S402","S403","S404","S405","S407","S501","S502","S503","S504","S601","S602","S603"],"大内山校舎":["Y401","Y403","Y404","Y501","Y502","Y503","Y504","Y505","Y506","Y602","Y603","Y605","Y606","Y701","Y702","Y703","Y704","Y705","Y801","Y803","Y804"]},"2限":{"ボアソナードタワー":["BT0300","BT0308","BT0309","BT0503","BT0504","BT0505","BT0506","BT0508","BT0509","BT0601","BT0603","BT0604","BT0605","BT0606","BT0608","BT0609","BT0701","BT0704","BT0800","BT0801","BT0804","BT0805","BT0900","BT0901","BT0903","BT0904","BT0905","BT0907","BT1001","BT1002","BT1003","BT1004","BT1005","BT1006","BT1007","BT1100","BT1102","BT1103","BT1200","BT1300"],"富士見坂校舎":["F301","F302","F303","F304","F305","F306","F307","F308","F309","F310","F311","F402","F404","F405","F406","F407","F501","F503","F505","F506","F507","F508"],"富士見ゲート":["G402","G403"],"外濠校舎":["S201","S202","S203","S204","S301","S302","S303","S304","S305","S306","S307","S401","S402","S403","S404","S501","S502","S503","S504","S505","S601","S602","S603"],"大内山校舎":["Y401","Y403","Y405","Y501","Y502","Y504","Y602","Y701","Y703","Y704","Y801","Y802","Y803","Y805"]},"3限":{"ボアソナードタワー":["BT0300","BT0308","BT0309","BT0504","BT0505","BT0506","BT0508","BT0509","BT0601","BT0602","BT0603","BT0604","BT0606","BT0608","BT0701","BT0702","BT0704","BT0705","BT0800","BT0802","BT0803","BT0900","BT0903","BT0905","BT0906","BT0907","BT1000","BT1001","BT1002","BT1003","BT1005","BT1007","BT1100","BT1101","BT1102","BT1103","BT1200","BT1300"],"富士見坂校舎":["F301","F302","F304","F305","F306","F307","F308","F311","F401","F402","F404","F405","F406","F407","F408","F501","F502","F503","F504","F505","F506","F507","F508"],"富士見ゲート":["G502"],"外濠校舎":["S201","S202","S203","S204","S302","S303","S304","S305","S401","S402","S404","S405","S501","S502","S504","S505","S601","S602","S603"],"大内山校舎":["Y401","Y403","Y404","Y406","Y502","Y504","Y505","Y506","Y601","Y603","Y604","Y605","Y705","Y801","Y802","Y803","Y804"]},"4限":{"ボアソナードタワー":["BT0300","BT0308","BT0309","BT0501","BT0505","BT0507","BT0508","BT0509","BT0601","BT0602","BT0606","BT0608","BT0701","BT0702","BT0705","BT0800","BT0801","BT0802","BT0803","BT0805","BT0900","BT0901","BT0902","BT0903","BT0905","BT0906","BT0907","BT1000","BT1002","BT1003","BT1005","BT1006","BT1007","BT1100","BT1101","BT1102","BT1200","BT1204","BT1300"],"富士見坂校舎":["F301","F303","F304","F305","F306","F307","F308","F311","F401","F402","F403","F404","F405","F406","F407","F501","F503","F504","F507","F508"],"富士見ゲート":["G402","G403"],"外濠校舎":["S201","S202","S203","S204","S301","S303","S304","S305","S401","S403","S404","S405","S406","S407","S502","S503","S601","S602","S603"],"大内山校舎":["Y401","Y402","Y403","Y501","Y502","Y503","Y505","Y506","Y601","Y602","Y603","Y605","Y606","Y703","Y801","Y802","Y803"]},"5限":{"ボアソナードタワー":["BT0300","BT0308","BT0309","BT0501","BT0502","BT0504","BT0505","BT0506","BT0507","BT0508","BT0509","BT0601","BT0602","BT0603","BT0604","BT0606","BT0608","BT0609","BT0610","BT0701","BT0702","BT0704","BT0705","BT0706","BT0800","BT0801","BT0802","BT0803","BT0804","BT0805","BT0806","BT0900","BT0901","BT0902","BT0903","BT0905","BT0906","BT0907","BT1000","BT1001","BT1002","BT1003","BT1004","BT1005","BT1006","BT1007","BT1100","BT1101","BT1102","BT1103","BT1200","BT1204","BT1300"],"富士見坂校舎":["F301","F303","F304","F305","F306","F307","F308","F309","F310","F311","F401","F402","F403","F404","F405","F406","F407","F501","F502","F503","F504","F506","F507","F508"],"富士見ゲート":["G401","G402","G403","G501","G502","G601","G602"],"外濠校舎":["S201","S202","S203","S204","S205","S301","S302","S303","S305","S401","S403","S404","S405","S406","S407","S502","S503","S504","S505","S601","S602","S603"],"大内山校舎":["Y402","Y403","Y404","Y405","Y406","Y501","Y503","Y504","Y505","Y506","Y601","Y602","Y603","Y605","Y606","Y701","Y702","Y703","Y801","Y802","Y803","Y804","Y805"]},"6限":{"ボアソナードタワー":["BT0300","BT0308","BT0309","BT0501","BT0502","BT0503","BT0504","BT0505","BT0506","BT0507","BT0508","BT0509","BT0601","BT0602","BT0603","BT0604","BT0605","BT0606","BT0608","BT0609","BT0610","BT0701","BT0702","BT0704","BT0705","BT0706","BT0800","BT0801","BT0802","BT0803","BT0804","BT0805","BT0806","BT0900","BT0901","BT0902","BT0903","BT0904","BT0905","BT0906","BT0907","BT1000","BT1001","BT1002","BT1003","BT1004","BT1005","BT1006","BT1007","BT1100","BT1101","BT1102","BT1103","BT1200","BT1204","BT1300"],"富士見坂校舎":["F301","F302","F303","F304","F305","F307","F308","F309","F310","F401","F402","F403","F404","F405","F406","F407","F408","F501","F502","F503","F504","F505","F506","F507","F508"],"富士見ゲート":["G201","G401","G402","G403","G501","G502","G503","G601","G602"],"外濠校舎":["S201","S202","S203","S204","S205","S303","S304","S305","S306","S307","S401","S402","S403","S404","S405","S406","S407","S501","S502","S503","S504","S505","S601","S602","S603"],"大内山校舎":["Y401","Y402","Y403","Y404","Y405","Y406","Y501","Y502","Y503","Y504","Y505","Y506","Y601","Y602","Y603","Y604","Y605","Y606","Y701","Y702","Y703","Y704","Y705","Y801","Y802","Y803","Y804","Y805"]},"7限":{"ボアソナードタワー":["BT0300","BT0308","BT0309","BT0501","BT0502","BT0503","BT0504","BT0505","BT0506","BT0507","BT0508","BT0509","BT0601","BT0602","BT0603","BT0604","BT0605","BT0606","BT0608","BT0609","BT0610","BT0701","BT0702","BT0704","BT0705","BT0706","BT0800","BT0801","BT0802","BT0803","BT0804","BT0805","BT0806","BT0900","BT0901","BT0902","BT0903","BT0904","BT0905","BT0906","BT0907","BT1000","BT1001","BT1002","BT1003","BT1004","BT1005","BT1006","BT1007","BT1100","BT1101","BT1102","BT1103","BT1200","BT1204","BT1300"],"富士見坂校舎":["F301","F302","F303","F304","F305","F306","F307","F308","F309","F310","F311","F401","F402","F403","F404","F405","F406","F407","F408","F501","F502","F503","F504","F505","F506","F507","F508"],"富士見ゲート":["G201","G401","G402","G403","G501","G502","G503","G601","G602"],"外濠校舎":["S201","S202","S203","S204","S205","S301","S302","S303","S304","S305","S306","S307","S401","S402","S403","S404","S405","S406","S407","S501","S502","S503","S504","S505","S601","S602","S603"],"大内山校舎":["Y401","Y402","Y403","Y404","Y405","Y406","Y501","Y502","Y503","Y504","Y505","Y506","Y601","Y602","Y603","Y604","Y605","Y606","Y701","Y702","Y703","Y704","Y705","Y801","Y802","Y803","Y804","Y805"]}},"土":{"1限":{"ボアソナードタワー":["BT0300","BT0308","BT0309","BT0501","BT0502","BT0503","BT0505","BT0506","BT0507","BT0508","BT0509","BT0601","BT0602","BT0603","BT0604","BT0605","BT0606","BT0608","BT0609","BT0610","BT0701","BT0702","BT0704","BT0705","BT0706","BT0800","BT0801","BT0802","BT0803","BT0804","BT0805","BT0806","BT0900","BT0901","BT0902","BT0903","BT0904","BT0905","BT0906","BT0907","BT1000","BT1001","BT1002","BT1003","BT1004","BT1005","BT1006","BT1007","BT1100","BT1101","BT1102","BT1103","BT1200","BT1204","BT1300"],"富士見坂校舎":["F301","F302","F303","F304","F305","F306","F307","F308","F309","F310","F311","F401","F402","F403","F404","F405","F406","F407","F408","F501","F502","F503","F504","F505","F506","F507","F508"],"富士見ゲート":["G201","G401","G402","G403","G501","G502","G503","G601","G602"],"外濠校舎":["S201","S202","S203","S204","S205","S301","S302","S303","S304","S305","S306","S307","S402","S403","S404","S405","S406","S407","S501","S502","S503","S504","S505","S601","S602","S603"],"大内山校舎":["Y401","Y402","Y403","Y404","Y405","Y406","Y501","Y502","Y503","Y504","Y505","Y506","Y601","Y602","Y603","Y604","Y605","Y606","Y701","Y702","Y703","Y704","Y705","Y801","Y802","Y803","Y804","Y805"]},"2限":{"ボアソナードタワー":["BT0300","BT0308","BT0309","BT0501","BT0502","BT0503","BT0504","BT0505","BT0506","BT0507","BT0508","BT0509","BT0601","BT0602","BT0603","BT0604","BT0605","BT0606","BT0608","BT0609","BT0610","BT0701","BT0702","BT0704","BT0706","BT0800","BT0801","BT0802","BT0803","BT0804","BT0805","BT0806","BT0900","BT0901","BT0902","BT0903","BT0904","BT0905","BT0906","BT0907","BT1000","BT1001","BT1002","BT1003","BT1004","BT1005","BT1006","BT1007","BT1100","BT1101","BT1102","BT1103","BT1200","BT1204","BT1300"],"富士見坂校舎":["F301","F302","F303","F304","F305","F306","F307","F308","F309","F310","F311","F402","F403","F404","F405","F406","F407","F408","F501","F502","F503","F504","F505","F506","F507","F508"],"富士見ゲート":["G201","G401","G402","G403","G501","G502","G503","G601","G602"],"外濠校舎":["S201","S202","S203","S204","S205","S301","S302","S303","S304","S307","S401","S402","S403","S404","S405","S406","S407","S501","S502","S503","S504","S505","S601","S602","S603"],"大内山校舎":["Y401","Y402","Y403","Y404","Y405","Y501","Y502","Y503","Y504","Y505","Y601","Y602","Y603","Y604","Y605","Y606","Y701","Y702","Y703","Y704","Y705","Y801","Y802","Y803","Y804","Y805"]},"3限":{"ボアソナードタワー":["BT0300","BT0308","BT0309","BT0501","BT0502","BT0503","BT0504","BT0505","BT0506","BT0507","BT0508","BT0509","BT0601","BT0602","BT0603","BT0604","BT0605","BT0606","BT0608","BT0609","BT0610","BT0701","BT0702","BT0704","BT0705","BT0706","BT0800","BT0802","BT0803","BT0804","BT0805","BT0806","BT0900","BT0901","BT0902","BT0903","BT0904","BT0905","BT0906","BT0907","BT1000","BT1001","BT1002","BT1003","BT1004","BT1005","BT1006","BT1007","BT1100","BT1101","BT1102","BT1103","BT1200","BT1204","BT1300"],"富士見坂校舎":["F301","F302","F303","F304","F305","F306","F307","F308","F309","F310","F311","F401","F402","F403","F404","F405","F406","F407","F408","F501","F502","F503","F504","F505","F506","F507","F508"],"富士見ゲート":["G201","G401","G402","G403","G501","G502","G503","G601","G602"],"外濠校舎":["S201","S202","S203","S204","S205","S301","S302","S303","S304","S305","S306","S307","S401","S402","S403","S404","S406","S407","S501","S502","S503","S504","S505","S601","S602","S603"],"大内山校舎":["Y401","Y402","Y403","Y404","Y405","Y406","Y501","Y502","Y503","Y504","Y505","Y506","Y601","Y602","Y603","Y604","Y605","Y606","Y701","Y702","Y703","Y704","Y705","Y801","Y802","Y803","Y804","Y805"]},"4限":{"ボアソナードタワー":["BT0300","BT0308","BT0309","BT0501","BT0502","BT0503","BT0504","BT0505","BT0506","BT0507","BT0508","BT0509","BT0601","BT0602","BT0603","BT0604","BT0605","BT0606","BT0608","BT0609","BT0610","BT0701","BT0702","BT0704","BT0705","BT0706","BT0800","BT0801","BT0802","BT0803","BT0804","BT0805","BT0806","BT0900","BT0901","BT0902","BT0903","BT0904","BT0905","BT0906","BT0907","BT1000","BT1001","BT1002","BT1003","BT1004","BT1005","BT1006","BT1007","BT1100","BT1101","BT1102","BT1103","BT1200","BT1204","BT1300"],"富士見坂校舎":["F301","F303","F304","F305","F306","F307","F308","F309","F310","F311","F401","F402","F403","F404","F405","F406","F407","F408","F501","F502","F503","F504","F505","F506","F507","F508"],"富士見ゲート":["G201","G401","G402","G403","G501","G502","G503","G601","G602"],"外濠校舎":["S201","S202","S203","S204","S205","S301","S302","S303","S304","S305","S306","S307","S401","S402","S403","S404","S405","S406","S407","S501","S502","S503","S504","S505","S601","S602","S603"],"大内山校舎":["Y401","Y402","Y403","Y404","Y405","Y406","Y501","Y502","Y503","Y504","Y505","Y506","Y601","Y602","Y603","Y604","Y605","Y606","Y701","Y702","Y703","Y704","Y705","Y801","Y802","Y803","Y804","Y805"]},"5限":{"ボアソナードタワー":["BT0300","BT0308","BT0309","BT0501","BT0502","BT0503","BT0504","BT0505","BT0506","BT0507","BT0508","BT0509","BT0601","BT0602","BT0603","BT0604","BT0605","BT0606","BT0608","BT0609","BT0610","BT0701","BT0702","BT0704","BT0705","BT0706","BT0800","BT0801","BT0802","BT0803","BT0804","BT0805","BT0806","BT0900","BT0901","BT0902","BT0903","BT0904","BT0905","BT0906","BT0907","BT1000","BT1001","BT1002","BT1003","BT1004","BT1005","BT1006","BT1007","BT1100","BT1101","BT1102","BT1103","BT1200","BT1204","BT1300"],"富士見坂校舎":["F301","F302","F303","F304","F305","F306","F307","F308","F309","F310","F311","F401","F402","F403","F404","F405","F406","F407","F408","F501","F502","F503","F504","F505","F506","F507","F508"],"富士見ゲート":["G201","G401","G402","G403","G501","G502","G503","G601","G602"],"外濠校舎":["S201","S202","S203","S204","S205","S301","S302","S303","S304","S305","S306","S307","S401","S402","S403","S404","S405","S406","S407","S501","S502","S503","S504","S505","S601","S602","S603"],"大内山校舎":["Y401","Y402","Y403","Y404","Y405","Y406","Y501","Y502","Y503","Y504","Y505","Y506","Y601","Y602","Y603","Y604","Y605","Y606","Y701","Y702","Y703","Y704","Y705","Y801","Y802","Y803","Y804","Y805"]},"6限":{"ボアソナードタワー":["BT0300","BT0308","BT0309","BT0501","BT0502","BT0503","BT0504","BT0505","BT0506","BT0507","BT0508","BT0509","BT0601","BT0602","BT0603","BT0604","BT0605","BT0606","BT0608","BT0609","BT0610","BT0701","BT0702","BT0704","BT0705","BT0706","BT0800","BT0801","BT0802","BT0803","BT0804","BT0805","BT0806","BT0900","BT0901","BT0902","BT0903","BT0904","BT0905","BT0906","BT0907","BT1000","BT1001","BT1002","BT1003","BT1004","BT1005","BT1006","BT1007","BT1100","BT1101","BT1102","BT1103","BT1200","BT1204","BT1300"],"富士見坂校舎":["F301","F302","F303","F304","F305","F306","F307","F308","F309","F310","F311","F401","F402","F403","F404","F405","F406","F407","F408","F501","F502","F503","F504","F505","F506","F507","F508"],"富士見ゲート":["G201","G401","G402","G403","G501","G502","G503","G601","G602"],"外濠校舎":["S201","S202","S203","S204","S205","S301","S302","S303","S304","S305","S306","S307","S401","S402","S403","S404","S405","S406","S407","S501","S502","S503","S504","S505","S601","S602","S603"],"大内山校舎":["Y401","Y402","Y403","Y404","Y405","Y406","Y501","Y502","Y503","Y504","Y505","Y506","Y601","Y602","Y603","Y604","Y605","Y606","Y701","Y702","Y703","Y704","Y705","Y801","Y802","Y803","Y804","Y805"]},"7限":{"ボアソナードタワー":["BT0300","BT0308","BT0309","BT0501","BT0502","BT0503","BT0504","BT0505","BT0506","BT0507","BT0508","BT0509","BT0601","BT0602","BT0603","BT0604","BT0605","BT0606","BT0608","BT0609","BT0610","BT0701","BT0702","BT0704","BT0705","BT0706","BT0800","BT0801","BT0802","BT0803","BT0804","BT0805","BT0806","BT0900","BT0901","BT0902","BT0903","BT0904","BT0905","BT0906","BT0907","BT1000","BT1001","BT1002","BT1003","BT1004","BT1005","BT1006","BT1007","BT1100","BT1101","BT1102","BT1103","BT1200","BT1204","BT1300"],"富士見坂校舎":["F301","F302","F303","F304","F305","F306","F307","F308","F309","F310","F311","F401","F402","F403","F404","F405","F406","F407","F408","F501","F502","F503","F504","F505","F506","F507","F508"],"富士見ゲート":["G201","G401","G402","G403","G501","G502","G503","G601","G602"],"外濠校舎":["S201","S202","S203","S204","S205","S301","S302","S303","S304","S305","S306","S307","S401","S402","S403","S404","S405","S406","S407","S501","S502","S503","S504","S505","S601","S602","S603"],"大内山校舎":["Y401","Y402","Y403","Y404","Y405","Y406","Y501","Y502","Y503","Y504","Y505","Y506","Y601","Y602","Y603","Y604","Y605","Y606","Y701","Y702","Y703","Y704","Y705","Y801","Y802","Y803","Y804","Y805"]}}},"occupied":{"火":{"3限":{"ボアソナードタワー":31,"富士見坂校舎":14,"富士見ゲート":5,"外濠校舎":13,"大内山校舎":20},"2限":{"ボアソナードタワー":19,"富士見坂校舎":6,"富士見ゲート":5,"外濠校舎":6,"大内山校舎":20},"4限":{"ボアソナードタワー":26,"富士見坂校舎":11,"富士見ゲート":4,"外濠校舎":19,"大内山校舎":11},"5限":{"ボアソナードタワー":16,"富士見坂校舎":8,"富士見ゲート":6,"外濠校舎":8,"大内山校舎":13},"1限":{"ボアソナードタワー":3,"富士見坂校舎":1,"富士見ゲート":3,"外濠校舎":1,"大内山校舎":4},"6限":{"ボアソナードタワー":1,"富士見ゲート":1,"大内山校舎":3}},"木":{"3限":{"ボアソナードタワー":26,"富士見坂校舎":10,"富士見ゲート":7,"外濠校舎":11,"大内山校舎":13},"4限":{"ボアソナードタワー":31,"富士見坂校舎":8,"富士見ゲート":4,"外濠校舎":12,"大内山校舎":10},"2限":{"ボアソナードタワー":15,"富士見坂校舎":7,"富士見ゲート":5,"外濠校舎":8,"大内山校舎":15},"5限":{"ボアソナードタワー":7,"富士見坂校舎":10,"富士見ゲート":3,"外濠校舎":3,"大内山校舎":9},"1限":{"富士見坂校舎":1,"富士見ゲート":1,"外濠校舎":4,"大内山校舎":5},"6限":{"外濠校舎":1,"大内山校舎":4}},"月":{"1限":{"ボアソナードタワー":2,"富士見坂校舎":1,"富士見ゲート":3,"外濠校舎":1,"大内山校舎":4},"2限":{"ボアソナードタワー":12,"富士見坂校舎":6,"富士見ゲート":6,"外濠校舎":8,"大内山校舎":13},"6限":{"ボアソナードタワー":1,"富士見坂校舎":1,"外濠校舎":1},"3限":{"ボアソナードタワー":15,"富士見坂校舎":6,"富士見ゲート":3,"外濠校舎":9,"大内山校舎":11},"5限":{"ボアソナードタワー":8,"富士見坂校舎":7,"富士見ゲート":3,"外濠校舎":2,"大内山校舎":3},"4限":{"ボアソナードタワー":19,"富士見坂校舎":9,"富士見ゲート":4,"外濠校舎":12,"大内山校舎":14}},"水":{"4限":{"ボアソナードタワー":28,"富士見坂校舎":9,"富士見ゲート":4,"外濠校舎":13,"大内山校舎":10},"2限":{"ボアソナードタワー":20,"富士見坂校舎":4,"富士見ゲート":6,"外濠校舎":12,"大内山校舎":13},"3限":{"ボアソナードタワー":24,"富士見坂校舎":5,"富士見ゲート":7,"外濠校舎":11,"大内山校舎":12},"5限":{"ボアソナードタワー":11,"富士見坂校舎":11,"富士見ゲート":3,"外濠校舎":2,"大内山校舎":5},"1限":{"ボアソナードタワー":6,"富士見坂校舎":2,"富士見ゲート":2,"外濠校舎":6,"大内山校舎":7},"6限":{"外濠校舎":2}},"金":{"2限":{"ボアソナードタワー":16,"富士見坂校舎":5,"富士見ゲート":7,"外濠校舎":4,"大内山校舎":14},"3限":{"ボアソナードタワー":18,"富士見坂校舎":4,"富士見ゲート":8,"外濠校舎":8,"大内山校舎":11},"4限":{"ボアソナードタワー":17,"富士見坂校舎":7,"富士見ゲート":7,"外濠校舎":8,"大内山校舎":11},"5限":{"ボアソナードタワー":3,"富士見坂校舎":3,"富士見ゲート":2,"外濠校舎":5,"大内山校舎":5},"1限":{"ボアソナードタワー":3,"富士見坂校舎":1,"富士見ゲート":3,"外濠校舎":3,"大内山校舎":7},"6限":{"富士見坂校舎":2,"外濠校舎":2}},"土":{"1限":{"ボアソナードタワー":1,"外濠校舎":1},"2限":{"ボアソナードタワー":1,"富士見坂校舎":1,"外濠校舎":2,"大内山校舎":2},"3限":{"ボアソナードタワー":1,"外濠校舎":1},"4限":{"富士見坂校舎":1}}}};
 
-const BUILDING_KEYS = [
-  { key: 'ボアソナードタワー', short: 'BT', label: 'ボアソナード・タワー' },
-  { key: '外濠校舎', short: 'S', label: '外濠校舎' },
-  { key: '富士見ゲート', short: 'G', label: '富士見ゲート' },
-  { key: '大内山校舎', short: 'Y', label: '大内山校舎' },
-  { key: '富士見坂校舎', short: 'F', label: '富士見坂校舎' }
-];
+const KEY_TO_NAME = {BT:'ボアソナードタワー', S:'外濠校舎', G:'富士見ゲート', Y:'大内山校舎', F:'富士見坂校舎'};
+const DAYS = ['月','火','水','木','金','土'];
+const PERIODS = ['1限','2限','3限','4限','5限','6限','7限'];
+const BLDG_KEYS = ['BT','S','G','Y','F'];
 
-let selectedDay = null;
-let selectedPeriod = null;
+let selectedDay = '';
+let selectedPeriod = '';
 let selectedBuilding = null;
-let showAll = false;
 
-function init() {
+function getCurrentDayPeriod() {
   const now = new Date();
-  const dayIndex = now.getDay();
-  const days = ['日','月','火','水','木','金','土'];
-  const dayStr = days[dayIndex];
-
-  if (['月','火','水','木','金','土'].includes(dayStr)) {
-    selectedDay = dayStr;
-  } else {
-    selectedDay = '月';
-  }
-
-  const hour = now.getHours();
-  const minute = now.getMinutes();
-  const timeVal = hour * 60 + minute;
-  const periodStarts = [
-    { p: '1限', start: 9*60+30, end: 11*60 },
-    { p: '2限', start: 11*60+10, end: 12*60+40 },
-    { p: '3限', start: 13*60+30, end: 15*60 },
-    { p: '4限', start: 15*60+10, end: 16*60+40 },
-    { p: '5限', start: 16*60+50, end: 18*60+20 },
-    { p: '6限', start: 18*60+30, end: 20*60 },
-    { p: '7限', start: 20*60+10, end: 21*60+40 }
-  ];
-
-  selectedPeriod = '1限';
-  for (const ps of periodStarts) {
-    if (timeVal >= ps.start && timeVal <= ps.end) {
-      selectedPeriod = ps.p;
-      break;
-    } else if (timeVal < ps.start) {
-      selectedPeriod = ps.p;
-      break;
-    }
-  }
-
-  document.querySelectorAll('.day-btn').forEach(function(btn) {
-    btn.addEventListener('click', function() {
-      selectedDay = btn.dataset.day;
-      update();
-    });
-  });
-  document.querySelectorAll('.period-btn').forEach(function(btn) {
-    btn.addEventListener('click', function() {
-      selectedPeriod = btn.dataset.period;
-      update();
-    });
-  });
-  document.querySelectorAll('.building-shape').forEach(function(el) {
-    el.addEventListener('click', function() {
-      var bName = el.dataset.building;
-      if (selectedBuilding === bName) {
-        selectedBuilding = null;
-      } else {
-        selectedBuilding = bName;
-        showAll = false;
-        document.getElementById('showAllBtn').classList.remove('active');
-      }
-      update();
-    });
-  });
-  document.getElementById('showAllBtn').addEventListener('click', function() {
-    showAll = !showAll;
-    if (showAll) {
-      selectedBuilding = null;
-      this.classList.add('active');
-    } else {
-      this.classList.remove('active');
-    }
-    update();
-  });
-
-  update();
+  const dow = now.getDay();
+  const dayMap = {1:'月',2:'火',3:'水',4:'木',5:'金',6:'土'};
+  const day = dayMap[dow] || '月';
+  const h = now.getHours();
+  const m = now.getMinutes();
+  const t = h * 60 + m;
+  let period = '1限';
+  if (t >= 570 && t < 680) period = '1限';
+  else if (t >= 680 && t < 790) period = '2限';
+  else if (t >= 790 && t < 900) period = '3限';
+  else if (t >= 900 && t < 1010) period = '4限';
+  else if (t >= 1010 && t < 1120) period = '5限';
+  else if (t >= 1120 && t < 1200) period = '6限';
+  else if (t >= 1200) period = '7限';
+  return { day: day, period: period };
 }
 
-function getRooms(day, period, building) {
-  try {
-    var rooms = DATA.free[day][period][building];
-    return rooms || [];
-  } catch(e) {
-    return [];
-  }
+function getRooms(day, period, buildingName) {
+  try { return DATA.free[day][period][buildingName] || []; } catch(e) { return []; }
 }
 
-function groupByFloor(rooms) {
-  var floors = {};
-  rooms.forEach(function(r) {
-    var match = r.match(/[A-Z]+(\d)/);
-    var floor = match ? match[1] + 'F' : '?';
-    if (!floors[floor]) floors[floor] = [];
-    floors[floor] = [].concat(floors[floor], [r]);
-  });
-  var sorted = Object.keys(floors).sort();
-  return sorted.map(function(f) { return { floor: f, rooms: floors[f] }; });
+function getCount(day, period, key) {
+  return getRooms(day, period, KEY_TO_NAME[key]).length;
 }
 
-function update() {
-  // Update day buttons
-  document.querySelectorAll('.day-btn').forEach(function(btn) {
-    btn.classList.toggle('active', btn.dataset.day === selectedDay);
-  });
-  document.querySelectorAll('.period-btn').forEach(function(btn) {
-    btn.classList.toggle('active', btn.dataset.period === selectedPeriod);
-  });
-
-  // Update building highlights and badges
-  BUILDING_KEYS.forEach(function(b) {
-    var el = document.getElementById('bldg-' + b.short);
-    var badge = document.getElementById('badge-' + b.short);
-    var badgeText = document.getElementById('badge-' + b.short + '-text');
-    var rooms = getRooms(selectedDay, selectedPeriod, b.key);
-    var count = rooms.length;
-
-    if (badgeText) badgeText.textContent = count;
-    if (badge) {
-      badge.style.display = count > 0 ? '' : 'none';
-      badgeText.style.display = count > 0 ? '' : 'none';
-    }
-
-    if (el) {
-      if (selectedBuilding === b.key) {
-        el.setAttribute('fill', '#FF6600');
-        el.setAttribute('stroke', '#cc5200');
-        el.setAttribute('stroke-width', '2.5');
-      } else {
-        el.setAttribute('fill', '#C8D6E5');
-        el.setAttribute('stroke', '#8899aa');
-        el.setAttribute('stroke-width', '1');
-      }
-    }
+function initControls() {
+  const dayContainer = document.getElementById('day-btns');
+  DAYS.forEach(function(d) {
+    const btn = document.createElement('button');
+    btn.className = 'btn' + (d === selectedDay ? ' active' : '');
+    btn.textContent = d;
+    btn.onclick = function() { selectedDay = d; updateAll(); };
+    dayContainer.appendChild(btn);
   });
 
-  // Render results
-  var resultsEl = document.getElementById('results');
-  var buildings = [];
+  const periodContainer = document.getElementById('period-btns');
+  PERIODS.forEach(function(p) {
+    const btn = document.createElement('button');
+    btn.className = 'btn' + (p === selectedPeriod ? ' active' : '');
+    btn.textContent = p;
+    btn.onclick = function() { selectedPeriod = p; updateAll(); };
+    periodContainer.appendChild(btn);
+  });
 
-  if (showAll) {
-    buildings = BUILDING_KEYS;
-  } else if (selectedBuilding) {
-    buildings = BUILDING_KEYS.filter(function(b) { return b.key === selectedBuilding; });
-  }
+  document.getElementById('show-all-btn').onclick = function() {
+    selectedBuilding = null;
+    BLDG_KEYS.forEach(function(k) {
+      document.querySelector('#bldg-' + k + ' rect').setAttribute('fill', '#C8D6E5');
+    });
+    showAllResults();
+  };
+}
 
-  if (buildings.length === 0) {
-    resultsEl.innerHTML = '<div class="no-rooms">建物をタップして空き教室を表示</div>';
+function updateButtons() {
+  document.querySelectorAll('#day-btns .btn').forEach(function(btn, i) {
+    btn.className = 'btn' + (DAYS[i] === selectedDay ? ' active' : '');
+  });
+  document.querySelectorAll('#period-btns .btn').forEach(function(btn, i) {
+    btn.className = 'btn' + (PERIODS[i] === selectedPeriod ? ' active' : '');
+  });
+}
+
+function updateBadges() {
+  BLDG_KEYS.forEach(function(key) {
+    const count = getCount(selectedDay, selectedPeriod, key);
+    const badge = document.getElementById('badge-' + key);
+    const text = document.getElementById('badge-text-' + key);
+    text.textContent = count;
+    badge.style.display = count > 0 ? '' : 'none';
+    text.style.display = count > 0 ? '' : 'none';
+  });
+}
+
+function updateBuildingColors() {
+  BLDG_KEYS.forEach(function(k) {
+    const rect = document.querySelector('#bldg-' + k + ' rect');
+    rect.setAttribute('fill', k === selectedBuilding ? '#FF6600' : '#C8D6E5');
+  });
+}
+
+function showBuildingResults(key) {
+  const name = KEY_TO_NAME[key];
+  const rooms = getRooms(selectedDay, selectedPeriod, name);
+  const results = document.getElementById('results');
+  if (rooms.length === 0) {
+    results.innerHTML = '<div class="building-section"><div class="building-name">' + name + ' <span class="building-count">0室</span></div><div class="no-rooms">この時間帯に空き教室はありません</div></div>';
     return;
   }
+  let html = '<div class="building-section"><div class="building-name">' + name + ' <span class="building-count">' + rooms.length + '室</span></div><div class="room-grid">';
+  rooms.forEach(function(r) { html += '<div class="room-card">' + r + '</div>'; });
+  html += '</div></div>';
+  results.innerHTML = html;
+}
 
-  var totalCount = 0;
-  var html = '';
-
-  buildings.forEach(function(b) {
-    var rooms = getRooms(selectedDay, selectedPeriod, b.key);
-    totalCount += rooms.length;
-    var groups = groupByFloor(rooms);
-
-    html += '<div class="building-section">';
-    html += '<div class="building-title">' + b.label + ' <span class="count">' + rooms.length + '室</span></div>';
-
-    if (rooms.length === 0) {
-      html += '<div class="no-rooms">空き教室はありません</div>';
+function showAllResults() {
+  const results = document.getElementById('results');
+  let html = '<div class="results-header">' + selectedDay + ' ' + selectedPeriod + ' の空き教室</div>';
+  BLDG_KEYS.forEach(function(key) {
+    const name = KEY_TO_NAME[key];
+    const rooms = getRooms(selectedDay, selectedPeriod, name);
+    html += '<div class="building-section"><div class="building-name">' + name + ' <span class="building-count">' + rooms.length + '室</span></div>';
+    if (rooms.length > 0) {
+      html += '<div class="room-grid">';
+      rooms.forEach(function(r) { html += '<div class="room-card">' + r + '</div>'; });
+      html += '</div>';
     } else {
-      groups.forEach(function(g) {
-        html += '<div class="floor-group">';
-        html += '<div class="floor-label">' + g.floor + '</div>';
-        html += '<div class="room-grid">';
-        g.rooms.forEach(function(r) {
-          html += '<div class="room">' + r + '</div>';
-        });
-        html += '</div></div>';
-      });
+      html += '<div class="no-rooms">空き教室なし</div>';
     }
     html += '</div>';
   });
-
-  var headerLabel = showAll ? 'すべての建物' : buildings[0].label;
-  resultsEl.innerHTML = '<div class="results-header">' + headerLabel + ' - ' + selectedDay + ' ' + selectedPeriod + '（' + totalCount + '室空き）</div>' + html;
+  results.innerHTML = html;
 }
 
-init();
+function updateResults() {
+  if (selectedBuilding) {
+    showBuildingResults(selectedBuilding);
+  } else {
+    document.getElementById('results').innerHTML = '<div class="no-selection">建物をタップして空き教室を確認</div>';
+  }
+}
+
+function updateAll() {
+  updateButtons();
+  updateBadges();
+  updateBuildingColors();
+  updateResults();
+}
+
+function initBuildingClicks() {
+  BLDG_KEYS.forEach(function(key) {
+    document.getElementById('bldg-' + key).addEventListener('click', function() {
+      if (selectedBuilding === key) {
+        selectedBuilding = null;
+      } else {
+        selectedBuilding = key;
+      }
+      updateBuildingColors();
+      updateResults();
+    });
+  });
+}
+
+(function init() {
+  const current = getCurrentDayPeriod();
+  selectedDay = current.day;
+  selectedPeriod = current.period;
+  initControls();
+  initBuildingClicks();
+  updateAll();
+})();
 </script>
 </body>
 </html>

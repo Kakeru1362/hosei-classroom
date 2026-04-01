@@ -27,11 +27,7 @@ header p{font-size:11px;color:rgba(255,255,255,.7);margin-top:4px}
 .building-row{display:flex;gap:6px;flex-wrap:wrap}
 .bldg-btn{height:40px;padding:0 14px;border:2px solid var(--border);border-radius:20px;background:var(--card);color:var(--text);font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;white-space:nowrap}
 .bldg-btn.active{background:var(--navy);color:#FFF;border-color:var(--navy)}
-.map-toggle{display:flex;gap:6px;margin-top:8px}
-.map-toggle-btn{height:36px;padding:0 16px;border:2px solid var(--border);border-radius:20px;background:var(--card);color:var(--text);font-size:12px;font-weight:500;cursor:pointer;transition:all .15s}
-.map-toggle-btn.active{background:var(--orange);color:#FFF;border-color:var(--orange)}
 .map-container{padding:12px;display:flex;justify-content:center}
-.map-container.hidden{display:none}
 svg{max-width:100%;height:auto}
 .building-clickable{cursor:pointer;transition:opacity .15s}
 .building-clickable:hover{opacity:.8}
@@ -61,15 +57,13 @@ svg{max-width:100%;height:auto}
 <div class="section-label">曜日</div>
 <div class="day-row" id="dayRow"></div>
 
-<div class="section-label">時限（連続選択可）</div>
+<div class="section-label">時限</div>
 <div class="period-grid" id="periodGrid"></div>
-<div class="period-hint" id="periodHint">タップで選択。連続した時限を複数選択できます</div>
+<div class="period-hint" id="periodHint">連続する空きコマをまとめて選択できます</div>
 
-<div class="section-label">建物（タップで絞り込み）</div>
-<div class="building-row" id="bldgRow"></div>
-
-<div class="map-toggle" id="mapToggle">
-  <button class="map-toggle-btn active" id="mapToggleBtn">マップ表示</button>
+<div class="section-label">建物（マップをタップで絞り込み）</div>
+<div class="building-row" id="bldgRow">
+  <button class="bldg-btn active" id="btn-all">すべて</button>
 </div>
 
 <div class="map-container" id="mapContainer">
@@ -157,7 +151,6 @@ const PERIODS = [
 var selectedDay = '';
 var selectedPeriods = new Set();
 var selectedBuilding = null; // null = すべて, or building key string
-var mapVisible = true;
 
 function getTodayDay() {
   var d = new Date().getDay();
@@ -208,34 +201,10 @@ function init() {
     periodGrid.appendChild(btn);
   });
 
-  // 建物ボタン
-  var bldgRow = document.getElementById('bldgRow');
-  var allBtn = document.createElement('button');
-  allBtn.className = 'bldg-btn active';
-  allBtn.textContent = 'すべて';
-  allBtn.dataset.building = '';
-  allBtn.addEventListener('click', function() {
+  // すべてボタン
+  document.getElementById('btn-all').addEventListener('click', function() {
     selectedBuilding = null;
     updateUI();
-  });
-  bldgRow.appendChild(allBtn);
-  BUILDINGS.forEach(function(b) {
-    var btn = document.createElement('button');
-    btn.className = 'bldg-btn';
-    btn.textContent = b.label;
-    btn.dataset.building = b.key;
-    btn.addEventListener('click', function() {
-      selectedBuilding = b.key;
-      updateUI();
-    });
-    bldgRow.appendChild(btn);
-  });
-
-  // マップ表示トグル
-  document.getElementById('mapToggleBtn').addEventListener('click', function() {
-    mapVisible = !mapVisible;
-    this.classList.toggle('active', mapVisible);
-    document.getElementById('mapContainer').classList.toggle('hidden', !mapVisible);
   });
 
   // マップ建物クリック
@@ -331,8 +300,7 @@ function updateUI() {
     var idx = parseInt(b.dataset.index);
     var isActive = selectedPeriods.has(b.dataset.period);
     b.classList.toggle('active', isActive);
-    var canSelect = selectedPeriods.size === 0 || isActive || idx === min - 1 || idx === max + 1;
-    b.classList.toggle('disabled', !canSelect);
+    b.classList.remove('disabled');
   });
 
   // 時限ヒント
@@ -340,14 +308,11 @@ function updateUI() {
   if (sorted.length > 1) {
     hint.textContent = PERIODS[sorted[0]].label + '〜' + PERIODS[sorted[sorted.length - 1]].label + ' の連続空きを検索中';
   } else {
-    hint.textContent = 'タップで選択。連続した時限を複数選択できます';
+    hint.textContent = '連続する空きコマをまとめて選択できます';
   }
 
-  // 建物ボタン
-  document.querySelectorAll('.bldg-btn').forEach(function(b) {
-    if (!b.dataset.building) b.classList.toggle('active', selectedBuilding === null);
-    else b.classList.toggle('active', b.dataset.building === selectedBuilding);
-  });
+  // すべてボタン
+  document.getElementById('btn-all').classList.toggle('active', selectedBuilding === null);
 
   // マップ
   updateMapColors();

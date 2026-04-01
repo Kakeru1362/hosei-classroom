@@ -87,12 +87,7 @@ svg { max-width: 100%; height: auto; }
   </select>
 </div>
 <div class="building-btns" id="building-btns">
-  <button class="bldg-btn-all active" id="btn-all">すべて</button>
-  <button class="bldg-btn" data-key="BT">BT</button>
-  <button class="bldg-btn" data-key="S">S</button>
-  <button class="bldg-btn" data-key="G">G</button>
-  <button class="bldg-btn" data-key="Y">Y</button>
-  <button class="bldg-btn" data-key="F">F</button>
+  <button class="bldg-btn-all active" id="btn-all">すべての建物を表示</button>
 </div>
 </div>
 
@@ -248,40 +243,19 @@ document.getElementById('period-select').addEventListener('change', function() {
   updateAll();
 });
 
-// 建物ボタン（複数選択）
+// 「すべて」ボタン
 function initBuildingButtons() {
   document.getElementById('btn-all').addEventListener('click', function() {
     allSelected = true;
     selectedBuildings.clear();
     updateBuildingButtons();
-    updateAll();
-  });
-
-  document.querySelectorAll('.bldg-btn').forEach(function(btn) {
-    btn.addEventListener('click', function() {
-      var key = btn.dataset.key;
-      allSelected = false;
-      document.getElementById('btn-all').classList.remove('active');
-
-      if (selectedBuildings.has(key)) {
-        selectedBuildings.delete(key);
-        if (selectedBuildings.size === 0) {
-          allSelected = true;
-        }
-      } else {
-        selectedBuildings.add(key);
-      }
-      updateBuildingButtons();
-      updateAll();
-    });
+    updateBuildingColors();
+    updateResults();
   });
 }
 
 function updateBuildingButtons() {
   document.getElementById('btn-all').classList.toggle('active', allSelected);
-  document.querySelectorAll('.bldg-btn').forEach(function(btn) {
-    btn.classList.toggle('active', selectedBuildings.has(btn.dataset.key));
-  });
 }
 
 // SVGマップクリック（複数選択対応）

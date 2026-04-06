@@ -375,7 +375,7 @@ function renderResults() {
     html += '<div class="building-group">';
     html += '<div class="building-header"><span class="name">' + bldg.label + '</span><span class="badge">' + rooms.length + '室</span></div>';
     html += '<div class="room-grid">';
-    sorted.forEach(function(r) { html += '<div class="room-card">' + r + '</div>'; });
+    sorted.forEach(function(r) { html += '<div class="room-card"><a href="https://kakeru1362.github.io/hosei-classroom-guide/?room=' + encodeURIComponent(r) + '" style="text-decoration:none;color:inherit" target="_blank">' + r + '</a></div>'; });
     html += '</div></div>';
   });
 

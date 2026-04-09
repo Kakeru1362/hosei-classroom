@@ -394,9 +394,12 @@ function renderResults() {
 }
 
 liff.init({ liffId: '2009743839-1DzECvtn' }).then(function() {
-  if (!liff.isLoggedIn()) {
-    liff.login();
-    return;
+  if (liff.isInClient()) {
+    // LINE内で開いた場合のみログイン処理
+    if (!liff.isLoggedIn()) {
+      liff.login();
+      return;
+    }
   }
   init();
 }).catch(function(err) {

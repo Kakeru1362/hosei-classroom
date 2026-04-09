@@ -47,7 +47,6 @@ svg{max-width:100%;height:auto}
 .hidden{display:none}
 @media(min-width:400px){.period-grid{grid-template-columns:repeat(3,1fr)}.room-grid{grid-template-columns:repeat(auto-fill,minmax(100px,1fr))}}
 </style>
-<script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 </head>
 <body>
 <header>
@@ -393,19 +392,7 @@ function renderResults() {
   }
 }
 
-liff.init({ liffId: '2009743839-1DzECvtn' }).then(function() {
-  if (liff.isInClient()) {
-    // LINE内で開いた場合のみログイン処理
-    if (!liff.isLoggedIn()) {
-      liff.login();
-      return;
-    }
-  }
-  init();
-}).catch(function(err) {
-  console.error('LIFF init failed:', err);
-  init();
-});
+init();
 </script>
 </body>
 </html>

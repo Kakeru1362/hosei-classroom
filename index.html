@@ -47,6 +47,7 @@ svg{max-width:100%;height:auto}
 .hidden{display:none}
 @media(min-width:400px){.period-grid{grid-template-columns:repeat(3,1fr)}.room-grid{grid-template-columns:repeat(auto-fill,minmax(100px,1fr))}}
 </style>
+<script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 </head>
 <body>
 <header>
@@ -150,7 +151,7 @@ const PERIODS = [
 
 var selectedDay = '';
 var selectedPeriods = new Set();
-var selectedBuilding = null; // null = すべて, or building key string
+var selectedBuildings = new Set(); // empty = すべて
 
 function getTodayDay() {
   var d = new Date().getDay();
@@ -203,7 +204,7 @@ function init() {
 
   // すべてボタン
   document.getElementById('btn-all').addEventListener('click', function() {
-    selectedBuilding = null;
+    selectedBuildings.clear();
     updateUI();
   });
 
@@ -211,10 +212,10 @@ function init() {
   BLDG_KEYS.forEach(function(mapKey) {
     document.getElementById('bldg-' + mapKey).addEventListener('click', function() {
       var bldgName = KEY_TO_NAME[mapKey];
-      if (selectedBuilding === bldgName) {
-        selectedBuilding = null;
+      if (selectedBuildings.has(bldgName)) {
+        selectedBuildings.delete(bldgName);
       } else {
-        selectedBuilding = bldgName;
+        selectedBuildings.add(bldgName);
       }
       updateUI();
     });
@@ -312,7 +313,7 @@ function updateUI() {
   }
 
   // すべてボタン
-  document.getElementById('btn-all').classList.toggle('active', selectedBuilding === null);
+  document.getElementById('btn-all').classList.toggle('active', selectedBuildings.size === 0);
 
   // マップ
   updateMapColors();
@@ -326,10 +327,10 @@ function updateMapColors() {
   BLDG_KEYS.forEach(function(k) {
     var rect = document.querySelector('#bldg-' + k + ' rect');
     var bldgName = KEY_TO_NAME[k];
-    var isSelected = selectedBuilding === null || selectedBuilding === bldgName;
-    if (selectedBuilding === bldgName) {
+    var isSelected = selectedBuildings.size === 0 || selectedBuildings.has(bldgName);
+    if (selectedBuildings.has(bldgName)) {
       rect.setAttribute('fill', '#FF6600');
-    } else if (selectedBuilding === null) {
+    } else if (selectedBuildings.size === 0) {
       rect.setAttribute('fill', '#B0C4DE');
     } else {
       rect.setAttribute('fill', '#C8D6E5');
@@ -360,8 +361,8 @@ function renderResults() {
   }
 
   var buildings = BUILDINGS;
-  if (selectedBuilding) {
-    buildings = buildings.filter(function(b) { return b.key === selectedBuilding; });
+  if (selectedBuildings.size > 0) {
+    buildings = buildings.filter(function(b) { return selectedBuildings.has(b.key); });
   }
 
   var totalFree = 0;
@@ -392,7 +393,16 @@ function renderResults() {
   }
 }
 
-init();
+liff.init({ liffId: '2009743839-1DzECvtn' }).then(function() {
+  if (!liff.isLoggedIn()) {
+    liff.login();
+    return;
+  }
+  init();
+}).catch(function(err) {
+  console.error('LIFF init failed:', err);
+  init();
+});
 </script>
 </body>
 </html>
